@@ -169,7 +169,19 @@
       <section>
         <div class="sec-title">
           基础周期走势
-          <select id="patN" class="pattern-select" onchange="renderClassic(); saveState();"></select>
+          <select id="patN" class="pattern-select" onchange="renderClassic(); saveState();">
+            <option value="1">1局</option>
+            <option value="2">2局</option>
+            <option value="3">3局</option>
+            <option value="4">4局</option>
+            <option value="5">5局</option>
+            <option value="6">6局</option>
+            <option value="7">7局</option>
+            <option value="8">8局</option>
+            <option value="9">9局</option>
+            <option value="10">10局</option>
+            <option value="11">11局</option>
+          </select>
           <span style="font-size:0.97em;color:#888;">选择周期长度</span>
         </div>
         <div class="classic-scroll"><div id="classicBox"></div></div>
@@ -301,6 +313,10 @@
           <thead><tr><th>局数</th><th>下注金额(元)</th><th>本局结果</th><th>累计盈亏</th><th>操作</th></tr></thead>
           <tbody></tbody>
         </table>
+        <div class="actions">
+          <button class="btn btn-win" onclick="addOscarWin()">本局赢</button>
+          <button class="btn btn-lose" onclick="addOscarLose()">本局输</button>
+        </div>
         <button class="btn reset-btn" onclick="resetOscar()">重置奥斯卡记录</button>
       </div>
 
@@ -315,6 +331,10 @@
           <thead><tr><th>局数</th><th>下注金额(元)</th><th>本局结果</th><th>累计盈亏</th><th>操作</th></tr></thead>
           <tbody></tbody>
         </table>
+        <div class="actions">
+          <button class="btn btn-win" onclick="addDalWin()">本局赢</button>
+          <button class="btn btn-lose" onclick="addDalLose()">本局输</button>
+        </div>
         <button class="btn reset-btn" onclick="resetDalembert()">重置达朗贝尔记录</button>
       </div>
 
@@ -329,6 +349,10 @@
           <thead><tr><th>局数</th><th>下注金额(元)</th><th>本局结果</th><th>累计盈亏</th><th>操作</th></tr></thead>
           <tbody></tbody>
         </table>
+        <div class="actions">
+          <button class="btn btn-win" onclick="addFiboWin()">本局赢</button>
+          <button class="btn btn-lose" onclick="addFiboLose()">本局输</button>
+        </div>
         <button class="btn reset-btn" onclick="resetFibo()">重置斐波那契记录</button>
       </div>
     </div>
@@ -337,299 +361,693 @@
     <div id="modal" style="display:none"></div>
   </div>
 
-  <script>
-    // 标签切换
-    function showTab(idx) {
-      document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('selected', i === idx));
-      document.querySelectorAll('.tab-content').forEach((tab, i) => tab.classList.toggle('active', i === idx));
-      updateSummary();
-      saveState();
-    }
+<script>
+// ===================== 全局基础变量 =====================
+// 百家乐记录
+let results = [];
+let userSelectedN = null;
+let mode = 1;
 
-    // 全局状态变量
-    let results = [];
-    let userSelectedN = null;
-    let mode = 1;
-    let moneyTabIndex = 0; // 0奥斯卡 1达朗贝尔 2斐波那契
-    let oscarStopped = false, dalembertStopped = false, fiboStopped = false;
+// 资金模块全局参数
+let UNIT = 20;
+let PROFIT_GOAL = 100;
+let LOSS_LIMIT = 500;
+let BANKROLL = 5000;
+let RISK_MODE = 'balanced';
 
-    function currentStopped() {
-      return moneyTabIndex===0 ? oscarStopped : (moneyTabIndex===1 ? dalembertStopped : fiboStopped);
-    }
-    function setStoppedForIndex(idx, v) {
-      if (idx===0) oscarStopped = v;
-      else if (idx===1) dalembertStopped = v;
-      else fiboStopped = v;
-      saveState();
-    }
+// 月度资金数据
+let monthStartBank = 20000;
+let currentBank = 20000;
+let monthTotalProfit = 0;
+let sessionProfit = 0;
 
-    // 资金打法子标签切换
-    function showMoneyTab(idx) {
-      moneyTabIndex = idx;
-      for (let i = 0; i < 3; i++) {
-        document.getElementById('moneyTab' + i).style.display = (i === idx ? "" : "none");
-        document.getElementById(['tabOscar', 'tabDalembert', 'tabFibo'][i]).classList.toggle('selected', i === idx);
-      }
-      updateSummary();
-      saveState();
-    }
+// 三套资金策略状态
+let moneyTabIndex = 0;
+// 奥斯卡
+let oscarList = [];
+let oscarStep = 1;
+let oscarStopped = false;
+// 达朗贝尔
+let dalList = [];
+let dalStep = 1;
+let dalembertStopped = false;
+// 斐波那契
+let fiboList = [];
+let fiboIdx = 0;
+let fiboSeq = [1,1,2,3,5,8,13,21,34,55,89,144,233];
+let fiboStopped = false;
 
-    // 设置折叠面板
-    let settingExpanded = true;
-    function toggleSettingCard() {
-      settingExpanded = !settingExpanded;
-      document.getElementById('settingBody').classList.toggle('hide', !settingExpanded);
-      document.getElementById('settingToggleIcon').textContent = settingExpanded ? '▼' : '▲';
-    }
+// 折叠面板状态
+let settingExpanded = true;
 
-    // ========== AI百家乐分析模块 ==========
-    function setMode(m) {
-      mode = m;
-      document.getElementById('mode1').classList.remove('selected');
-      document.getElementById('mode2').classList.remove('selected');
-      document.getElementById('mode3').classList.remove('selected');
-      document.getElementById('mode'+m).classList.add('selected');
-      userSelectedN = null;
-      renderAll();
-      saveState();
-    }
-    function getPatternN() {
-      let sel = document.getElementById('patN');
-      let n = parseInt(sel.value);
-      return (isNaN(n) || n<1) ? 1 : n;
-    }
-    // 判断是否满足可分析条件（至少10条记录）
-    function isEvaluatable() { return results.length >= 10; }
-    // 判断当前走势是否适合下注
-    function isPlayable() {
-      if(results.length < 10) return false;
-      let count = 0;
-      for (let size = 1; size <= 11; size++) {
-        let info = analyzeSet(size);
-        if (!info) continue;
-        if ((info.percent >= 60 && info.maxLose < 3) || (info.percentAnti >= 60 && info.maxLoseAnti < 3)) count++;
-      }
-      return count >= 3;
-    }
-    // 盘面质量评估提示
-    function evaluateQuality() {
-      if (!isEvaluatable()) {
-        return `<div class="box-qual bad"><span class="icon">✏️</span> 请至少录入10局数据后再评估盘面质量</div>`;
-      }
-      if (isPlayable()) {
-        return `<div class="box-qual good"><span class="icon">✅</span> 当前盘面适合下注！检测到多组高准确率周期<br>仅跟随AI推荐点位下注即可</div>`;
-      } else {
-        return `<div class="box-qual bad"><span class="icon">⚠️</span> 当前盘面不建议下注，无稳定高准确率周期<br>建议换桌或等待走势清晰再操作</div>`;
-      }
-    }
-    // 渲染基础周期表格
-    function renderClassic() {
-      let N = getPatternN();
-      let html = `<table>
-        <tr><th>局号</th><th>实际结果</th><th>周期预测(前${N}局)</th><th>对错标记</th></tr>`;
-      let correct = 0, total = 0;
-      for(let i=0; i<results.length; i++) {
-        let pred = '-';
-        if(i >= N) {
-          let idx = (i-N) % N; if(idx < 0) idx += N;
-          if (results[idx] !== undefined) pred = results[idx];
-        }
-        let mark = '';
-        if(pred !== '-' && results[i]) {
-          if(results[i] === pred) { mark = '<span class="cell-plus">+</span>'; correct++; }
-          else { mark = '<span class="cell-minus">-</span>'; }
-          total++;
-        }
-        let c = results[i]==='B'?'circle-b':(results[i]==='P'?'circle-p':'circle-null');
-        let extra = (i === results.length-1) ? 'latest' : '';
-        html += `<tr>
-          <td>${i+1}</td>
-          <td><span class="${c} ${extra}">${results[i]||''}</span></td>
-          <td>${pred}</td>
-          <td>${mark}</td>
-        </tr>`;
-      }
-      let nextNo = results.length+1;
-      let nextPred='-';
-      if(results.length >= N) {
-        let idx = (results.length-N) % N; if(idx < 0) idx += N;
-        if (results[idx] !== undefined) nextPred = results[idx];
-      }
-      if(nextPred !== '-') {
-        html += `<tr class="row-next">
-          <td>${nextNo}</td>
-          <td><span class="circle-null">?</span></td>
-          <td class="predict-now"><b>${nextPred}</b></td>
-          <td></td>
-        </tr>`;
-      }
-      html += `<tr><td colspan="2">整体准确率</td><td colspan="2"><b>${total?Math.round(100*correct/total):'-'}%</b></td></tr>`;
-      html += `</table>`;
-      document.getElementById('classicBox').innerHTML = html;
-      setTimeout(()=>{ let el = document.querySelector('.classic-scroll'); if(el) el.scrollTop = el.scrollHeight; },30);
-    }
-    // 分析单周期数据
-    function analyzeSet(size) {
-      if(results.length < size*2) return null;
-      let correct=0, maxLose=0, loseNow=0;
-      let correctAnti=0, maxLoseAnti=0, loseNowAnti=0;
-      for(let i=size; i<results.length; i++) {
-        let idx = (i-size) % size; if(idx < 0) idx += size;
-        let pred = results[idx];
-        let anti = pred==='B'?'P':'B';
-        if(results[i] === pred) { correct++; loseNow=0; } else { loseNow++; }
-        if(loseNow > maxLose) maxLose = loseNow;
-        if(results[i] === anti) { correctAnti++; loseNowAnti=0; } else { loseNowAnti++; }
-        if(loseNowAnti > maxLoseAnti) maxLoseAnti = loseNowAnti;
-      }
-      let total = (results.length-size);
-      let percent = total?Math.round(100*correct/total):0;
-      let percentAnti = total?Math.round(100*correctAnti/total):0;
-      return {
-        size, percent, percentAnti, maxLose, maxLoseAnti, total,
-        good: percent>=60 && maxLose<3,
-        bad: percentAnti>=60 && maxLoseAnti<3,
-        hot: (percent>=60 && maxLose<3)||(percentAnti>=60 && maxLoseAnti<3)
-      };
-    }
-    // 周期分析总表
-    function renderSuggestTable() {
-      let suggestHTML = `<table>
-      <tr>
-        <th>周期长度</th><th>顺周期准确率</th><th>反周期准确率</th><th>顺周期最大连错</th><th>反周期最大连错</th><th>状态标签</th>
-      </tr>`;
-      for(let size=1; size<=11; size++) {
-        let info = analyzeSet(size);
-        if(!info) { suggestHTML += `<tr><td colspan="6" style="background:#f2faff;">录入更多数据后可分析${size}局周期</td></tr>`; continue; }
-        let tag = "";
-        if(info.good) tag = `<span class="tag tag-good">顺周期推荐</span>`;
-        if(info.bad) tag += ` <span class="tag tag-bad">反周期推荐</span>`;
-        if(info.hot) tag += ` <span class="tag tag-hot">高热度周期</span>`;
-        suggestHTML += `<tr${info.hot?' style="background:#fffbe2"':''}>
-          <td>${info.size}局</td>
-          <td class="${info.percent>=60?'cell-plus':'cell-minus'}">${info.percent}%</td>
-          <td class="${info.percentAnti>=60?'cell-plus':'cell-minus'}">${info.percentAnti}%</td>
-          <td>${info.maxLose}</td>
-          <td>${info.maxLoseAnti}</td>
-          <td>${tag}</td>
-        </tr>`;
-      }
-      suggestHTML += `</table>`;
-      document.getElementById('sugTable').innerHTML = suggestHTML;
-    }
-    // 筛选符合条件的高热度周期
-    function isPlayableHot() {
-      if (results.length < 10) return false;
-      let hotCount = 0;
-      for (let size = 1; size <= 11; size++) { let info = analyzeSet(size); if (info && info.hot) hotCount++; }
-      if (mode === 1) return hotCount >= 1;
-      if (mode === 2) return hotCount >= 2;
-      if (mode === 3) return hotCount >= 3;
-      return false;
-    }
-    // 获取周期对应的预测方向
-    function getSide(size, anti) {
-      let side = '';
-      if(results.length >= size) {
-        let idx = (results.length - size) % size; if(idx < 0) idx += size;
-        if (results[idx] !== undefined) side = anti ? (results[idx] === 'B' ? 'P' : 'B') : results[idx];
-      }
-      return side;
-    }
-    // 最优下注推荐
-    function bestSuggest() {
-      if (results.length < 10) return "";
-      if (!isPlayableHot()) return "";
-      let hotList = [];
-      for (let size = 1; size <= 11; size++) {
-        let info = analyzeSet(size);
-        if (!info) continue;
-        if (info.good)  hotList.push({size, type: '顺周期', side: getSide(size, false), percent: info.percent,     lose: info.maxLose});
-        if (info.bad)   hotList.push({size, type: '反周期', side: getSide(size, true),  percent: info.percentAnti, lose: info.maxLoseAnti});
-      }
-      hotList.sort((a, b) => b.percent - a.percent || a.lose - b.lose || a.size - b.size);
-      if (!hotList.length) return "";
-      let best = hotList[0];
-      let betBtn = `<span class="${best.side == 'B' ? 'Bbet' : 'Pbet'}">${best.side == 'B' ? '闲B' : '庄P'}</span>`;
-      let detail = (best.type == '顺周期') ? `准确率${best.percent}% / 最大连错${best.lose}局` : `反周期准确率${best.percent}% / 最大连错${best.lose}局`;
-      autoSelectPatternN(best.size);
-      return `<span class="good">AI推荐：<b>${best.size}局周期</b> <u>${best.type}操作</u> 下注${betBtn}</span><br>
-              <span class="mid" style="font-size:0.98em">${detail}</span>`;
-    }
-    function renderBest() { document.getElementById('sugBestTop').innerHTML = bestSuggest(); }
-    function renderAll() {
-      document.getElementById('qualityMsg').innerHTML = evaluateQuality();
-      renderBest(); renderClassic(); renderSuggestTable();
-    }
-    function autoSelectPatternN(n) {
-      let sel = document.getElementById('patN');
-      if(!userSelectedN || userSelectedN != n.toString()) {
-        if(sel.value != n) { sel.value = n; renderClassic(); }
-        userSelectedN = null;
-      }
-    }
-    // 添加对局记录
-    function addResult(val) { results.push(val); userSelectedN = null; renderAll(); saveState(); }
-    // 撤销最后一条
-    function removeLast() { results.pop(); userSelectedN = null; renderAll(); saveState(); }
-    // 清空全部记录
-    function resetAll() { if(confirm('确定清空所有对局记录？')){results=[]; userSelectedN = null; renderAll(); saveState();} }
+// ===================== 通用弹窗 =====================
+function showModal(title, content) {
+  const modal = document.getElementById('modal');
+  modal.innerHTML = `
+    <div class="modal-bg" onclick="closeModal(event)">
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <h3>${title}</h3>
+        <div>${content}</div>
+        <button class="btn btn-confirm" onclick="closeModal()">确定</button>
+      </div>
+    </div>
+  `;
+  modal.style.display = "block";
+}
+function closeModal(e) {
+  if(e && e.target !== e.currentTarget) return;
+  document.getElementById('modal').style.display = "none";
+}
 
-    // ========== 混合资金管理模块 ==========
-    // 计算最大可连输局数
-    function calcMaxLoseOscar(unit, limit) { return Math.floor(limit / unit); }
-    function calcMaxLoseDalembert(unit, limit) {
-      let sum = 0, n = 0;
-      while (sum < limit) { n++; sum += n * unit; }
-      return n-1;
+// ===================== 顶部标签切换 =====================
+function showTab(idx) {
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('selected', i === idx);
+  });
+  document.querySelectorAll('.tab-content').forEach((tab, i) => {
+    tab.classList.toggle('active', i === idx);
+  });
+  updateSummary();
+  saveState();
+}
+
+// ===================== 资金子标签切换 =====================
+function showMoneyTab(idx) {
+  moneyTabIndex = idx;
+  const ids = ['moneyTab0','moneyTab1','moneyTab2'];
+  const btns = ['tabOscar','tabDalembert','tabFibo'];
+  for(let i=0;i<3;i++){
+    document.getElementById(ids[i]).style.display = i===idx ? "" : "none";
+    document.getElementById(btns[i]).classList.toggle('selected', i===idx);
+  }
+  updateSummary();
+  saveState();
+}
+
+// ===================== 设置折叠面板 =====================
+function toggleSettingCard() {
+  settingExpanded = !settingExpanded;
+  document.getElementById('settingBody').classList.toggle('hide', !settingExpanded);
+  document.getElementById('settingToggleIcon').textContent = settingExpanded ? '▼' : '▲';
+}
+
+// ===================== 百家乐AI分析模块 =====================
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.mode-btn').forEach(el=>el.classList.remove('selected'));
+  document.getElementById('mode'+m).classList.add('selected');
+  userSelectedN = null;
+  renderAll();
+  saveState();
+}
+
+function getPatternN() {
+  const sel = document.getElementById('patN');
+  const n = parseInt(sel.value);
+  return isNaN(n) || n<1 ? 1 : n;
+}
+
+function isEvaluatable() {
+  return results.length >= 10;
+}
+
+function isPlayable() {
+  if(results.length < 10) return false;
+  let count = 0;
+  for(let s=1;s<=11;s++){
+    const info = analyzeSet(s);
+    if(!info) continue;
+    if((info.percent>=60 && info.maxLose<3) || (info.percentAnti>=60 && info.maxLoseAnti<3)) count++;
+  }
+  return count >=3;
+}
+
+function evaluateQuality() {
+  if(!isEvaluatable()){
+    return `<div class="box-qual bad"><span class="icon">✏️</span> 请至少录入10局数据后再评估盘面质量</div>`;
+  }
+  if(isPlayable()){
+    return `<div class="box-qual good"><span class="icon">✅</span> 当前盘面适合下注！检测到多组高准确率周期<br>仅跟随AI推荐点位下注即可</div>`;
+  }else{
+    return `<div class="box-qual bad"><span class="icon">⚠️</span> 当前盘面不建议下注，无稳定高准确率周期<br>建议换桌或等待走势清晰再操作</div>`;
+  }
+}
+
+function analyzeSet(size) {
+  if(results.length < size*2) return null;
+  let correct=0, maxLose=0, loseNow=0;
+  let correctAnti=0, maxLoseAnti=0, loseNowAnti=0;
+  for(let i=size; i<results.length; i++){
+    const idx = (i - size) % size;
+    const pred = results[idx];
+    const anti = pred === 'B' ? 'P' : 'B';
+    if(results[i] === pred){
+      correct++; loseNow=0;
+    }else{
+      loseNow++;
+      if(loseNow>maxLose) maxLose = loseNow;
     }
-    function calcMaxLoseFibo(unit, limit) {
-      let fiboSeq = [1,1,2,3,5,8,13,21,34,55,89,144,233];
-      let sum = 0, n = 0;
-      for (let i = 0; i < fiboSeq.length; i++) {
-        sum += fiboSeq[i]*unit;
-        if (sum > limit) return n;
-        n++;
+    if(results[i] === anti){
+      correctAnti++; loseNowAnti=0;
+    }else{
+      loseNowAnti++;
+      if(loseNowAnti>maxLoseAnti) maxLoseAnti = loseNowAnti;
+    }
+  }
+  const total = results.length - size;
+  const pct = total ? Math.round(100*correct/total) : 0;
+  const pctAnti = total ? Math.round(100*correctAnti/total) : 0;
+  return {
+    size,
+    percent: pct,
+    percentAnti: pctAnti,
+    maxLose,
+    maxLoseAnti,
+    good: pct>=60 && maxLose<3,
+    bad: pctAnti>=60 && maxLoseAnti<3,
+    hot: (pct>=60 && maxLose<3) || (pctAnti>=60 && maxLoseAnti<3)
+  };
+}
+
+function renderClassic() {
+  const N = getPatternN();
+  let html = `<table><tr><th>局号</th><th>实际结果</th><th>周期预测(前${N}局)</th><th>对错标记</th></tr>`;
+  let correct=0, total=0;
+  for(let i=0;i<results.length;i++){
+    let pred = '-';
+    if(i >= N){
+      const idx = (i-N) % N;
+      pred = results[idx];
+    }
+    let mark = '';
+    if(pred !== '-'){
+      total++;
+      if(results[i] === pred){
+        mark = '<span class="cell-plus">+</span>';
+        correct++;
+      }else{
+        mark = '<span class="cell-minus">-</span>';
       }
-      return n;
     }
-    // 更新最大连输提示文字
-    function showMaxLoseInfo() {
-      const unit = Math.max(1, parseInt(document.getElementById('unitInput').value)||1);
-      const limit = Math.max(1, parseInt(document.getElementById('lossLimitInput').value)||1);
-      document.getElementById('oscarInfo').innerHTML     = `连续输${calcMaxLoseOscar(unit, limit)}局即达到止损上限(${limit}元)`;
-      document.getElementById('dalembertInfo').innerHTML = `连续输${calcMaxLoseDalembert(unit, limit)}局即达到止损上限(${limit}元)`;
-      document.getElementById('fiboInfo').innerHTML      = `连续输${calcMaxLoseFibo(unit, limit)}局即达到止损上限(${limit}元)`;
+    const cls = results[i]==='B' ? 'circle-b' : 'circle-p';
+    const latest = i === results.length-1 ? 'latest' : '';
+    html += `<tr>
+      <td>${i+1}</td>
+      <td><span class="${cls} ${latest}">${results[i]}</span></td>
+      <td>${pred}</td>
+      <td>${mark}</td>
+    </tr>`;
+  }
+  // 下一局预测
+  const nextIdx = (results.length - N) % N;
+  const nextPred = results.length >= N ? results[nextIdx] : '-';
+  if(nextPred !== '-'){
+    html += `<tr class="row-next">
+      <td>${results.length+1}</td>
+      <td><span class="circle-null">?</span></td>
+      <td class="predict-now"><b>${nextPred}</b></td>
+      <td></td>
+    </tr>`;
+  }
+  const rate = total ? Math.round(100*correct/total) : '-';
+  html += `<tr><td colspan="2">整体准确率</td><td colspan="2"><b>${rate}%</b></td></tr></table>`;
+  document.getElementById('classicBox').innerHTML = html;
+  const scrollDom = document.querySelector('.classic-scroll');
+  if(scrollDom) scrollDom.scrollTop = scrollDom.scrollHeight;
+}
+
+function renderSuggestTable() {
+  let html = `<table><tr><th>周期长度</th><th>顺周期准确率</th><th>反周期准确率</th><th>顺周期最大连错</th><th>反周期最大连错</th><th>状态标签</th></tr>`;
+  for(let s=1;s<=11;s++){
+    const info = analyzeSet(s);
+    if(!info){
+      html += `<tr><td colspan="6" style="background:#f2faff;">录入更多数据后可分析${s}局周期</td></tr>`;
+      continue;
     }
-    let UNIT = 20, PROFIT_GOAL = 100, LOSS_LIMIT = 500;
-    let BANKROLL = 5000, RISK_MODE = 'balanced';
-    // 数值取整
-    function roundToStep(val, step){ return Math.max(step, Math.round(val/step)*step); }
-    // 不同风险比例
-    function percentagesByRisk(mode){
-      if(mode==='safe')     return {pctUnit:0.005, pctGoal:0.015, pctLoss:0.03};
-      if(mode==='aggr')     return {pctUnit:0.02,  pctGoal:0.04,  pctLoss:0.08};
-      return {pctUnit:0.01,  pctGoal:0.025, pctLoss:0.05};
+    let tag = '';
+    if(info.good) tag += `<span class="tag tag-good">顺周期推荐</span>`;
+    if(info.bad) tag += ` <span class="tag tag-bad">反周期推荐</span>`;
+    if(info.hot) tag += ` <span class="tag tag-hot">高热度周期</span>`;
+    const rowBg = info.hot ? 'style="background:#fffbe2"' : '';
+    html += `<tr ${rowBg}>
+      <td>${s}局</td>
+      <td class="${info.percent>=60?'cell-plus':'cell-minus'}">${info.percent}%</td>
+      <td class="${info.percentAnti>=60?'cell-plus':'cell-minus'}">${info.percentAnti}%</td>
+      <td>${info.maxLose}</td>
+      <td>${info.maxLoseAnti}</td>
+      <td>${tag}</td>
+    </tr>`;
+  }
+  html += `</table>`;
+  document.getElementById('sugTable').innerHTML = html;
+}
+
+function isPlayableHot() {
+  if(results.length<10) return false;
+  let hot = 0;
+  for(let s=1;s<=11;s++){
+    const i = analyzeSet(s);
+    if(i && i.hot) hot++;
+  }
+  if(mode===1) return hot>=1;
+  if(mode===2) return hot>=2;
+  return hot>=3;
+}
+
+function getSide(size, anti) {
+  if(results.length < size) return '';
+  const idx = (results.length - size) % size;
+  const base = results[idx];
+  return anti ? (base==='B'?'P':'B') : base;
+}
+
+function bestSuggest() {
+  if(results.length<10 || !isPlayableHot()) return '';
+  const hotList = [];
+  for(let s=1;s<=11;s++){
+    const info = analyzeSet(s);
+    if(!info) continue;
+    if(info.good) hotList.push({size:s, type:'顺周期', side:getSide(s,false), p:info.percent, lose:info.maxLose});
+    if(info.bad) hotList.push({size:s, type:'反周期', side:getSide(s,true), p:info.percentAnti, lose:info.maxLoseAnti});
+  }
+  if(!hotList.length) return '';
+  hotList.sort((a,b)=>b.p - a.p || a.lose - b.lose || a.size - b.size);
+  const best = hotList[0];
+  const betText = best.side === 'B' ? '<span class="Bbet">闲B</span>' : '<span class="Pbet">庄P</span>';
+  autoSelectPatternN(best.size);
+  return `<span class="good">AI推荐：<b>${best.size}局周期</b> <u>${best.type}操作</u> 下注${betText}</span><br><span class="mid" style="font-size:0.98em">准确率${best.p}% / 最大连错${best.lose}局</span>`;
+}
+
+function renderBest() {
+  document.getElementById('sugBestTop').innerHTML = bestSuggest();
+}
+
+function renderAll() {
+  document.getElementById('qualityMsg').innerHTML = evaluateQuality();
+  renderBest();
+  renderClassic();
+  renderSuggestTable();
+}
+
+function autoSelectPatternN(n) {
+  const sel = document.getElementById('patN');
+  if(!userSelectedN || userSelectedN != String(n)){
+    if(sel.value != String(n)){
+      sel.value = n;
+      renderClassic();
     }
-    // 根据本金自动换算参数
-    function calcFromBankroll(){
-      syncBankrollFromCurrent();
-      const step = 5;
-      BANKROLL = Math.max(1, parseInt(document.getElementById('bankrollInput').value)||5000);
-      RISK_MODE = document.getElementById('riskMode').value || 'balanced';
-      const {pctUnit, pctGoal, pctLoss} = percentagesByRisk(RISK_MODE);
-      let unit  = roundToStep(BANKROLL * pctUnit, step);
-      let goal  = roundToStep(BANKROLL * pctGoal, step);
-      let limit = roundToStep(BANKROLL * pctLoss, step*2);
-      goal  = Math.max(goal,  unit * 5);
-      limit = Math.max(limit, unit * 15);
-      document.getElementById('unitInput').value = unit;
-      document.getElementById('profitGoalInput').value = goal;
-      document.getElementById('lossLimitInput').value = limit;
-      setSettings();
-      const oscLose = calcMaxLoseOscar(unit, limit);
-      const dalLose = calcMaxLoseDalembert(unit, limit);
-      const fibLose = calcMaxLoseFibo(unit, limit);
-      showModal("✅ 本金自动换算完成",
-        `基础单位: <b>${unit}</b> 元 | 单轮止盈: <b>${goal}</b> 元 | 单轮止损: <b>${limit}</b> 元<br><br>
-        预估最大连输承受：<br>
+    userSelectedN = null;
+  }
+}
+
+function addResult(val) {
+  results.push(val);
+  userSelectedN = null;
+  renderAll();
+  saveState();
+}
+function removeLast() {
+  results.pop();
+  userSelectedN = null;
+  renderAll();
+  saveState();
+}
+function resetAll() {
+  if(confirm('确定清空所有对局记录？')){
+    results = [];
+    userSelectedN = null;
+    renderAll();
+    saveState();
+  }
+}
+
+// ===================== 资金管理通用计算 =====================
+function calcMaxLoseOscar(unit, limit) {
+  return Math.floor(limit / unit);
+}
+function calcMaxLoseDalembert(unit, limit) {
+  let sum=0,n=0;
+  while(sum < limit){
+    n++; sum += n*unit;
+  }
+  return n-1;
+}
+function calcMaxLoseFibo(unit, limit) {
+  let sum=0,n=0;
+  for(let num of fiboSeq){
+    sum += num * unit;
+    if(sum > limit) return n;
+    n++;
+  }
+  return n;
+}
+function showMaxLoseInfo() {
+  const unit = Math.max(1, parseInt(document.getElementById('unitInput').value)||1);
+  const limit = Math.max(1, parseInt(document.getElementById('lossLimitInput').value)||1);
+  document.getElementById('oscarInfo').innerHTML = `连续输${calcMaxLoseOscar(unit, limit)}局即达到止损上限(${limit}元)`;
+  document.getElementById('dalembertInfo').innerHTML = `连续输${calcMaxLoseDalembert(unit, limit)}局即达到止损上限(${limit}元)`;
+  document.getElementById('fiboInfo').innerHTML = `连续输${calcMaxLoseFibo(unit, limit)}局即达到止损上限(${limit}元)`;
+}
+
+function roundToStep(val, step) {
+  return Math.max(step, Math.round(val / step) * step);
+}
+function percentagesByRisk(mode) {
+  if(mode === 'safe') return {pctUnit:0.005, pctGoal:0.015, pctLoss:0.03};
+  if(mode === 'aggr') return {pctUnit:0.02, pctGoal:0.04, pctLoss:0.08};
+  return {pctUnit:0.01, pctGoal:0.025, pctLoss:0.05};
+}
+
+function syncBankrollFromCurrent() {
+  document.getElementById('bankrollInput').value = document.getElementById('bkCurrent').value;
+}
+
+function calcFromBankroll() {
+  syncBankrollFromCurrent();
+  const step = 5;
+  BANKROLL = Math.max(1, parseInt(document.getElementById('bankrollInput').value)||5000);
+  RISK_MODE = document.getElementById('riskMode').value || 'balanced';
+  const {pctUnit, pctGoal, pctLoss} = percentagesByRisk(RISK_MODE);
+  let unit = roundToStep(BANKROLL * pctUnit, step);
+  let goal = roundToStep(BANKROLL * pctGoal, step);
+  let limit = roundToStep(BANKROLL * pctLoss, step*2);
+  goal = Math.max(goal, unit*5);
+  limit = Math.max(limit, unit*15);
+  document.getElementById('unitInput').value = unit;
+  document.getElementById('profitGoalInput').value = goal;
+  document.getElementById('lossLimitInput').value = limit;
+  setSettings();
+  showModal("✅ 本金自动换算完成",`基础单位: <b>${unit}</b> 元 | 单轮止盈: <b>${goal}</b> 元 | 单轮止损: <b>${limit}</b> 元`);
+}
+
+function applyPreset(mode) {
+  document.getElementById('riskMode').value = mode;
+  calcFromBankroll();
+}
+
+function setSettings() {
+  monthStartBank = Number(document.getElementById('bkStart').value) || 0;
+  currentBank = Number(document.getElementById('bkCurrent').value) || 0;
+  UNIT = Number(document.getElementById('unitInput').value) || 1;
+  PROFIT_GOAL = Number(document.getElementById('profitGoalInput').value) || 1;
+  LOSS_LIMIT = Number(document.getElementById('lossLimitInput').value) || 1;
+  BANKROLL = Number(document.getElementById('bankrollInput').value) || 5000;
+  RISK_MODE = document.getElementById('riskMode').value;
+  showMaxLoseInfo();
+  renderAllMoneyTables();
+  updateSummary();
+  saveState();
+}
+
+// ===================== 奥斯卡策略逻辑 =====================
+function resetOscar() {
+  oscarList = [];
+  oscarStep = 1;
+  oscarStopped = false;
+  renderOscarTable();
+  saveState();
+}
+function addOscarWin() {
+  if(oscarStopped) return showModal("提示","本轮已达止盈/止损，无法继续下注，请重置");
+  const bet = oscarStep * UNIT;
+  sessionProfit += bet;
+  oscarList.push({bet, res:"赢", profit:sessionProfit});
+  if(sessionProfit >= PROFIT_GOAL){
+    oscarStopped = true;
+    showModal("止盈达成",`本轮盈利${sessionProfit}元，达到止盈${PROFIT_GOAL}，自动停止`);
+  }else{
+    oscarStep += 1;
+  }
+  renderOscarTable();
+  updateSummary();
+  saveState();
+}
+function addOscarLose() {
+  if(oscarStopped) return showModal("提示","本轮已达止盈/止损，无法继续下注，请重置");
+  const bet = oscarStep * UNIT;
+  sessionProfit -= bet;
+  oscarList.push({bet, res:"输", profit:sessionProfit});
+  if(Math.abs(sessionProfit) >= LOSS_LIMIT){
+    oscarStopped = true;
+    showModal("止损触发",`本轮亏损${Math.abs(sessionProfit)}元，触碰止损${LOSS_LIMIT}，自动停止`);
+  }
+  renderOscarTable();
+  updateSummary();
+  saveState();
+}
+function renderOscarTable() {
+  let html = `<thead><tr><th>局数</th><th>下注金额(元)</th><th>本局结果</th><th>累计盈亏</th></tr></thead><tbody>`;
+  oscarList.forEach((row,i)=>{
+    const pCls = row.profit >=0 ? 'profit' : 'loss';
+    html += `<tr>
+      <td>${i+1}</td>
+      <td>${row.bet}</td>
+      <td>${row.res}</td>
+      <td class="${pCls}">${row.profit}</td>
+    </tr>`;
+  });
+  html += `</tbody>`;
+  document.getElementById('oscarTable').innerHTML = html;
+}
+
+// ===================== 达朗贝尔策略逻辑 =====================
+function resetDalembert() {
+  dalList = [];
+  dalStep = 1;
+  dalembertStopped = false;
+  renderDalTable();
+  saveState();
+}
+function addDalWin() {
+  if(dalembertStopped) return showModal("提示","本轮已达止盈/止损，无法继续下注，请重置");
+  const bet = dalStep * UNIT;
+  sessionProfit += bet;
+  dalList.push({bet, res:"赢", profit:sessionProfit});
+  if(sessionProfit >= PROFIT_GOAL){
+    dalembertStopped = true;
+    showModal("止盈达成",`本轮盈利${sessionProfit}元，达到止盈${PROFIT_GOAL}，自动停止`);
+  }else{
+    dalStep = Math.max(1, dalStep - 1);
+  }
+  renderDalTable();
+  updateSummary();
+  saveState();
+}
+function addDalLose() {
+  if(dalembertStopped) return showModal("提示","本轮已达止盈/止损，无法继续下注，请重置");
+  const bet = dalStep * UNIT;
+  sessionProfit -= bet;
+  dalList.push({bet, res:"输", profit:sessionProfit});
+  if(Math.abs(sessionProfit) >= LOSS_LIMIT){
+    dalembertStopped = true;
+    showModal("止损触发",`本轮亏损${Math.abs(sessionProfit)}元，触碰止损${LOSS_LIMIT}，自动停止`);
+  }
+  dalStep += 1;
+  renderDalTable();
+  updateSummary();
+  saveState();
+}
+function renderDalTable() {
+  let html = `<thead><tr><th>局数</th><th>下注金额(元)</th><th>本局结果</th><th>累计盈亏</th></tr></thead><tbody>`;
+  dalList.forEach((row,i)=>{
+    const pCls = row.profit >=0 ? 'profit' : 'loss';
+    html += `<tr>
+      <td>${i+1}</td>
+      <td>${row.bet}</td>
+      <td>${row.res}</td>
+      <td class="${pCls}">${row.profit}</td>
+    </tr>`;
+  });
+  html += `</tbody>`;
+  document.getElementById('dalembertTable').innerHTML = html;
+}
+
+// ===================== 斐波那契策略逻辑 =====================
+function resetFibo() {
+  fiboList = [];
+  fiboIdx = 0;
+  fiboStopped = false;
+  renderFiboTable();
+  saveState();
+}
+function addFiboWin() {
+  if(fiboStopped) return showModal("提示","本轮已达止盈/止损，无法继续下注，请重置");
+  const bet = fiboSeq[fiboIdx] * UNIT;
+  sessionProfit += bet;
+  fiboList.push({bet, res:"赢", profit:sessionProfit});
+  if(sessionProfit >= PROFIT_GOAL){
+    fiboStopped = true;
+    showModal("止盈达成",`本轮盈利${sessionProfit}元，达到止盈${PROFIT_GOAL}，自动停止`);
+  }else{
+    fiboIdx = Math.max(0, fiboIdx - 2);
+  }
+  renderFiboTable();
+  updateSummary();
+  saveState();
+}
+function addFiboLose() {
+  if(fiboStopped) return showModal("提示","本轮已达止盈/止损，无法继续下注，请重置");
+  const bet = fiboSeq[fiboIdx] * UNIT;
+  sessionProfit -= bet;
+  fiboList.push({bet, res:"输", profit:sessionProfit});
+  if(Math.abs(sessionProfit) >= LOSS_LIMIT){
+    fiboStopped = true;
+    showModal("止损触发",`本轮亏损${Math.abs(sessionProfit)}元，触碰止损${LOSS_LIMIT}，自动停止`);
+  }
+  fiboIdx += 1;
+  renderFiboTable();
+  updateSummary();
+  saveState();
+}
+function renderFiboTable() {
+  let html = `<thead><tr><th>局数</th><th>下注金额(元)</th><th>本局结果</th><th>累计盈亏</th></tr></thead><tbody>`;
+  fiboList.forEach((row,i)=>{
+    const pCls = row.profit >=0 ? 'profit' : 'loss';
+    html += `<tr>
+      <td>${i+1}</td>
+      <td>${row.bet}</td>
+      <td>${row.res}</td>
+      <td class="${pCls}">${row.profit}</td>
+    </tr>`;
+  });
+  html += `</tbody>`;
+  document.getElementById('fiboTable').innerHTML = html;
+}
+
+function renderAllMoneyTables() {
+  renderOscarTable();
+  renderDalTable();
+  renderFiboTable();
+}
+
+// ===================== 月度资金 =====================
+function commitSessionProfit() {
+  monthTotalProfit += sessionProfit;
+  currentBank += sessionProfit;
+  sessionProfit = 0;
+  resetOscar();
+  resetDalembert();
+  resetFibo();
+  document.getElementById('bkCurrent').value = currentBank;
+  updateSummary();
+  saveState();
+  showModal("保存成功","本轮盈利已计入月度总盈利，已清空本轮记录");
+}
+function startNewMonth() {
+  if(confirm("确定重置整个月度周期？所有月度盈利清零")){
+    monthStartBank = currentBank;
+    monthTotalProfit = 0;
+    sessionProfit = 0;
+    resetOscar();
+    resetDalembert();
+    resetFibo();
+    document.getElementById('bkStart').value = monthStartBank;
+    document.getElementById('bkCurrent').value = currentBank;
+    updateSummary();
+    saveState();
+  }
+}
+
+// ===================== 汇总数据更新 =====================
+function updateSummary() {
+  const totalHands = oscarList.length + dalList.length + fiboList.length;
+  let maxDD = 0;
+  const all = [...oscarList,...dalList,...fiboList];
+  all.forEach(item=>{
+    if(item.profit < 0 && Math.abs(item.profit) > maxDD) maxDD = Math.abs(item.profit);
+  });
+  const progressRate = Math.min(100, Math.round(sessionProfit / PROFIT_GOAL * 100));
+  document.getElementById('sumProfit').innerText = sessionProfit;
+  document.getElementById('sumHands').innerText = totalHands;
+  document.getElementById('sumMDD').innerText = maxDD;
+  document.getElementById('sumProgress').style.width = progressRate + "%";
+  document.getElementById('sumProgressTxt').innerText = progressRate + "% 达成止盈目标";
+
+  // 月度卡片
+  document.getElementById('bkTotalProfit').innerText = monthTotalProfit;
+  document.getElementById('bkSessionProfit').innerText = sessionProfit;
+  const needTarget = Math.max(0, document.getElementById('bkTarget').value - monthTotalProfit);
+  document.getElementById('bkToGo').innerText = needTarget;
+  const monthRate = document.getElementById('bkTarget').value > 0 ? Math.min(100, Math.round(monthTotalProfit / document.getElementById('bkTarget').value * 100)) : 0;
+  document.getElementById('bkMonthProgress').style.width = monthRate + "%";
+}
+
+// ===================== 本地存储持久化 =====================
+function saveState() {
+  const data = {
+    results, userSelectedN, mode,
+    monthStartBank, currentBank, monthTotalProfit, sessionProfit,
+    UNIT, PROFIT_GOAL, LOSS_LIMIT, BANKROLL, RISK_MODE,
+    oscarList, oscarStep, oscarStopped,
+    dalList, dalStep, dalembertStopped,
+    fiboList, fiboIdx, fiboStopped,
+    moneyTabIndex, settingExpanded
+  };
+  localStorage.setItem('bacData', JSON.stringify(data));
+}
+function loadState() {
+  const raw = localStorage.getItem('bacData');
+  if(!raw) return;
+  try{
+    const d = JSON.parse(raw);
+    Object.keys(d).forEach(k=>window[k]=d[k]);
+    // 回填输入框
+    document.getElementById('bkStart').value = monthStartBank || 20000;
+    document.getElementById('bkCurrent').value = currentBank || 20000;
+    document.getElementById('unitInput').value = UNIT || 20;
+    document.getElementById('profitGoalInput').value = PROFIT_GOAL || 100;
+    document.getElementById('lossLimitInput').value = LOSS_LIMIT || 500;
+    document.getElementById('bankrollInput').value = BANKROLL || 5000;
+    document.getElementById('riskMode').value = RISK_MODE || 'balanced';
+    document.getElementById('bkTarget').value = document.getElementById('bkTarget').value || 5000;
+    // 折叠面板状态
+    document.getElementById('settingBody').classList.toggle('hide', !settingExpanded);
+    document.getElementById('settingToggleIcon').textContent = settingExpanded ? '▼' : '▲';
+    // 渲染全部表格
+    renderAll();
+    renderAllMoneyTables();
+    showMaxLoseInfo();
+    showMoneyTab(moneyTabIndex);
+    updateSummary();
+  }catch(e){
+    console.log("读取本地存储失败",e);
+  }
+}
+
+// ===================== 导入导出 =====================
+function exportState() {
+  const str = localStorage.getItem('bacData') || "{}";
+  const blob = new Blob([str], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = "百家乐资金管理备份.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function importState(file) {
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      JSON.parse(e.target.result);
+      localStorage.setItem('bacData', e.target.result);
+      loadState();
+      showModal("导入成功","备份数据已加载，页面已刷新");
+    }catch(err){
+      showModal("导入失败","文件格式损坏，不是合法JSON备份");
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ===================== 页面初始化 =====================
+window.onload = function(){
+  loadState();
+  renderAll();
+  renderAllMoneyTables();
+  showMaxLoseInfo();
+  updateSummary();
+}
+</script>
+</body>
+</html>
