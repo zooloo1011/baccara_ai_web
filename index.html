@@ -1,126 +1,537 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
+
 <head>
 
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
 
-<title>Baccarat AI</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Baccarat AI Pro MAX</title>
+
 
 <style>
 
-body{
-font-family:Arial;
-background:#eeeeee;
-text-align:center;
+*{
+box-sizing:border-box;
 }
 
-.box{
-background:white;
-margin:20px;
-padding:20px;
-border-radius:15px;
+body{
+
+margin:0;
+
+background:#101010;
+
+color:white;
+
+font-family:
+"Microsoft YaHei",
+Arial;
+
 }
+
+
+.container{
+
+max-width:500px;
+
+margin:auto;
+
+padding:15px;
+
+}
+
+
+
+.card{
+
+background:#1b1b1b;
+
+border-radius:18px;
+
+padding:18px;
+
+margin-bottom:15px;
+
+box-shadow:
+0 5px 15px #000;
+
+}
+
+
+
+.title{
+
+text-align:center;
+
+font-size:30px;
+
+font-weight:bold;
+
+color:#ffd700;
+
+}
+
+
+.subtitle{
+
+text-align:center;
+
+color:#aaa;
+
+margin-top:5px;
+
+}
+
+
+
+h3{
+
+color:#ffd700;
+
+}
+
+
 
 button{
-font-size:24px;
-padding:15px 25px;
-margin:8px;
+
+border:0;
+
+border-radius:12px;
+
+padding:14px;
+
+margin:5px;
+
+font-size:17px;
+
+font-weight:bold;
+
+}
+
+
+
+.b{
+
+background:#b22222;
+
+color:white;
+
+}
+
+
+
+.p{
+
+background:#1e90ff;
+
+color:white;
+
+}
+
+
+
+.t{
+
+background:#228b22;
+
+color:white;
+
+}
+
+
+
+.yellow{
+
+width:100%;
+
+background:#ffd700;
+
+color:black;
+
+}
+
+
+
+input,select{
+
+width:100%;
+
+padding:12px;
+
+margin-top:8px;
+
 border-radius:10px;
+
+border:0;
+
+font-size:16px;
+
 }
 
-#history{
-font-size:20px;
-word-wrap:break-word;
+
+
+.box{
+
+background:#000;
+
+padding:12px;
+
+border-radius:12px;
+
+line-height:1.8;
+
 }
 
-.result{
-font-size:22px;
-margin-top:20px;
+
+
+.score{
+
+font-size:28px;
+
+text-align:center;
+
+color:#ffd700;
+
 }
+
+
+.small{
+
+color:#aaa;
+
+font-size:14px;
+
+}
+
 
 </style>
 
+
 </head>
+
 
 
 <body>
 
 
-<div class="box">
+<div class="container">
 
-<h1>
+
+
+<div class="card">
+
+<div class="title">
+
 Baccarat AI
-</h1>
+
+</div>
 
 
-<h3>
-输入开奖结果
-</h3>
+<div class="subtitle">
+
+Pro MAX 走势分析系统
+
+</div>
+
+</div>
 
 
-<button onclick="add('B')">
+
+
+
+<div class="card">
+
+
+<h3>💰资金管理</h3>
+
+
+本金：
+
+<input id="capital"
+type="number"
+value="1000">
+
+
+
+风险等级：
+
+<select id="risk">
+
+
+<option value="low">
+
+低风险
+
+</option>
+
+
+<option value="mid">
+
+中风险
+
+</option>
+
+
+<option value="high">
+
+高风险
+
+</option>
+
+
+</select>
+
+
+
+下注策略：
+
+<select id="strategy">
+
+
+<option value="flat">
+
+平注
+
+</option>
+
+
+<option value="win">
+
+赢冲
+
+</option>
+
+
+<option value="stop">
+
+输撤
+
+</option>
+
+
+</select>
+
+
+<div id="moneyInfo"
+class="box">
+
+</div>
+
+
+
+<button class="yellow"
+onclick="settle('win')">
+
+本局赢
+
+</button>
+
+
+<button class="yellow"
+onclick="settle('lose')">
+
+本局输
+
+</button>
+
+
+</div>
+
+
+
+
+
+<div class="card">
+
+
+<h3>🎲输入牌路</h3>
+
+
+
+<button class="b"
+onclick="add('B')">
+
 庄 B
+
 </button>
 
 
-<button onclick="add('P')">
+
+<button class="p"
+onclick="add('P')">
+
 闲 P
+
 </button>
 
 
-<button onclick="add('T')">
+
+<button class="t"
+onclick="add('T')">
+
 和 T
+
 </button>
 
 
-<h3>
-最近20局
-</h3>
 
-<div id="history">
+<br>
+
+
+<button class="yellow"
+onclick="undo()">
+
+撤销上一局
+
+</button>
+
+
+
+<button class="yellow"
+onclick="clearAll()">
+
+清空牌桌
+
+</button>
+
+
+
+<button class="yellow"
+onclick="newTable()">
+
+新牌桌
+
+</button>
+
+
 </div>
 
 
-<div class="result" id="result">
+
+
+
+<div class="card">
+
+
+<h3>📊当前牌路</h3>
+
+
+<div id="history"
+class="box">
+
+暂无数据
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="card">
+
+
+<h3>🤖AI分析</h3>
+
+
+
+<div id="score"
+class="score">
+
 等待数据
+
 </div>
 
 
-<button onclick="clearData()">
-清除记录
+
+<div id="analysis"
+class="box">
+
+</div>
+
+
+
+<div id="signal"
+class="box">
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="card">
+
+
+<h3>📚历史数据库</h3>
+
+
+<button class="yellow"
+onclick="saveDatabase()">
+
+保存历史数据
+
 </button>
 
 
+<button class="yellow"
+onclick="similarSearch()">
+
+查询相似走势
+
+</button>
+
+
+<div id="databaseInfo"
+class="box">
+
 </div>
+
+
+</div>
+
+
+
+</div>
+
 
 
 
 <script>
 
 
-let data =
+// ==============================
+// Baccarat AI Pro MAX V1.0
+// AI分析核心
+// ==============================
+
+
+let history =
 JSON.parse(
-localStorage.getItem("baccarat")
-||"[]"
+localStorage.getItem("baccarat_history")
+||
+"[]"
 );
 
 
 
+// 添加结果
+
 function add(x){
 
-data.push(x);
-
-
-if(data.length>100){
-
-data.shift();
-
-}
+history.push(x);
 
 
 localStorage.setItem(
-"baccarat",
-JSON.stringify(data)
+"baccarat_history",
+JSON.stringify(history)
 );
 
 
@@ -130,127 +541,1078 @@ analysis();
 
 
 
-function analysis(){
+
+// 删除上一局
+
+function undo(){
+
+history.pop();
 
 
-let last20 =
-data.slice(-20);
+localStorage.setItem(
+"baccarat_history",
+JSON.stringify(history)
+);
 
 
-
-document.getElementById(
-"history"
-).innerHTML =
-last20.join(" ");
-
-
-
-let b =
-last20.filter(
-x=>x=="B"
-).length;
-
-
-let p =
-last20.filter(
-x=>x=="P"
-).length;
-
-
-
-let msg="";
-
-
-
-if(b>p){
-
-msg="偏庄方向";
+analysis();
 
 }
 
-else if(p>b){
 
-msg="偏闲方向";
+
+// 清空牌桌
+
+function clearAll(){
+
+history=[];
+
+
+localStorage.removeItem(
+"baccarat_history"
+);
+
+
+analysis();
 
 }
 
-else{
 
-msg="暂无明显方向";
+
+
+// 新牌桌
+
+function newTable(){
+
+history=[];
+
+
+localStorage.removeItem(
+"baccarat_history"
+);
+
+
+analysis();
+
+
+alert("新牌桌开始");
 
 }
+
+
+
+// ==============================
+// 统计模块
+// ==============================
+
+
+function count(data){
+
+
+let B=0;
+let P=0;
+let T=0;
+
+
+
+data.forEach(x=>{
+
+
+if(x=="B")B++;
+
+if(x=="P")P++;
+
+if(x=="T")T++;
+
+
+});
+
+
+
+let total=data.length;
+
+
+
+return {
+
+
+B:B,
+
+P:P,
+
+T:T,
+
+
+Bper:
+total?
+(B/total*100).toFixed(1)
+:0,
+
+
+Pper:
+total?
+(P/total*100).toFixed(1)
+:0
+
+
+};
+
+
+}
+
 
 
 
 
 // 连续检测
 
-let last=data[data.length-1];
-
-let count=0;
+function streak(){
 
 
-for(let i=data.length-1;i>=0;i--){
+if(history.length==0)
 
-if(data[i]==last){
+return {
+name:"",
+num:0
+};
 
-count++;
 
-}
 
-else{
+let last =
+history[history.length-1];
+
+
+let num=0;
+
+
+
+for(let i=history.length-1;i>=0;i--){
+
+
+if(history[i]==last){
+
+num++;
+
+}else{
 
 break;
 
 }
 
+
+}
+
+
+
+return {
+
+name:last,
+
+num:num
+
+};
+
+
 }
 
 
 
-if(count>=3){
 
-msg += "<br>出现连续走势:"+last+count+"次";
+
+
+// ==============================
+// 路型分析
+// ==============================
+
+
+function roadAnalyze(){
+
+
+let data =
+history.slice(-12);
+
+
+
+if(data.length<5){
+
+return "数据不足";
 
 }
+
+
+
+
+// 单跳
+
+let jump=true;
+
+
+for(let i=1;i<data.length;i++){
+
+
+if(data[i]==data[i-1]){
+
+jump=false;
+
+}
+
+
+}
+
+
+
+if(jump){
+
+return "单跳走势";
+
+}
+
+
+
+
+// 双跳
+
+let two=true;
+
+
+for(let i=2;i<data.length;i++){
+
+
+if(data[i]!=data[i-2]){
+
+two=false;
+
+}
+
+}
+
+
+
+if(two){
+
+return "双跳走势";
+
+}
+
+
+
+
+// 长龙
+
+let s=streak();
+
+
+
+if(s.num>=4){
+
+return s.name+"长龙";
+
+}
+
+
+
+return "普通走势";
+
+
+}
+
+
+
+
+
+// ==============================
+// 冷热分析
+// ==============================
+
+
+function hotCold(){
+
+
+let last =
+count(
+history.slice(-20)
+);
+
+
+
+if(last.Bper>=60){
+
+return "庄偏热";
+
+}
+
+
+
+if(last.Pper>=60){
+
+return "闲偏热";
+
+}
+
+
+
+return "冷热平衡";
+
+
+}
+
+
+
+
+
+// ==============================
+// AI评分
+// ==============================
+
+
+function AIscore(){
+
+
+let B=50;
+
+let P=50;
+
+
+
+let all=count(history);
+
+
+
+if(all.Bper>55){
+
+B+=10;
+
+}
+
+
+if(all.Pper>55){
+
+P+=10;
+
+}
+
+
+
+let recent=
+count(
+history.slice(-20)
+);
+
+
+
+if(recent.Bper>55){
+
+B+=8;
+
+}
+
+
+if(recent.Pper>55){
+
+P+=8;
+
+}
+
+
+
+
+let s=streak();
+
+
+
+if(s.num>=3){
+
+
+if(s.name=="B"){
+
+B+=5;
+
+}
+
+
+if(s.name=="P"){
+
+P+=5;
+
+}
+
+
+}
+
+
+
+let total=B+P;
+
+
+
+return {
+
+
+B:
+(B/total*100)
+.toFixed(1),
+
+
+P:
+(P/total*100)
+.toFixed(1)
+
+
+
+};
+
+
+
+}
+
+
+
+
+
+// ==============================
+// AI建议
+// ==============================
+
+
+function advice(){
+
+
+
+let ai=AIscore();
+
+
+
+let diff=
+Math.abs(
+Number(ai.B)
+-
+Number(ai.P)
+);
+
+
+
+let text="";
+
+
+
+if(diff<5){
+
+text="⚪ 观望，走势不明显";
+
+}
+
+
+else if(ai.B>ai.P){
+
+text="🟡 偏庄方向";
+
+}
+
+
+else{
+
+text="🟡 偏闲方向";
+
+}
+
+
+
+
+if(history.length<15){
+
+text+="<br>⚠ 数据较少";
+
+}
+
+
+
+else if(history.length>=40){
+
+text+="<br>数据较完整";
+
+}
+
+
+
+return text;
+
+
+}
+
+
+
+
+
+// ==============================
+// 页面更新
+// ==============================
+
+
+function analysis(){
+
+
+let h=
+document.getElementById("history");
+
+
+let score=
+document.getElementById("score");
+
+
+let result=
+document.getElementById("analysis");
+
+
+let signal=
+document.getElementById("signal");
+
+
+
+if(history.length==0){
+
+
+h.innerHTML="暂无数据";
+
+
+score.innerHTML="等待数据";
+
+
+result.innerHTML="";
+
+
+signal.innerHTML="";
+
+
+return;
+
+}
+
+
+
+
+let stat=count(history);
+
+
+let ai=AIscore();
+
+
+
+h.innerHTML=
+
+"当前局数："+
+history.length+
+
+"<br><br>"+
+
+history.join(" ");
+
+
+
+
+
+score.innerHTML=
+
+"庄 "+
+ai.B+
+"%　"
+
++
+"闲 "+
+ai.P+
+"%";
+
+
+
+
+
+result.innerHTML=
+
+"庄次数："+
+stat.B+
+
+"<br>闲次数："+
+stat.P+
+
+"<br>和次数："+
+stat.T+
+
+"<br><br>"+
+
+
+"走势："+
+roadAnalyze()+
+
+
+"<br><br>"+
+
+
+"冷热："+
+hotCold()+
+
+
+"<br><br>"+
+
+
+"最近："+
+streak().name+
+" "
++
+streak().num+
+"连";
+
+
+
+
+signal.innerHTML=
+
+"AI建议：<br>"
+
++
+advice();
+
+
+
+
+
+updateMoney();
+
+
+}
+
+
+
+analysis();
+
+// ==============================
+// 资金管理系统
+// ==============================
+
+
+let capital =
+Number(
+localStorage.getItem("capital")
+||
+document.getElementById("capital").value
+);
+
+
+
+let winCount=0;
+
+let loseCount=0;
+
+
+
+
+// 基础下注
+
+
+function baseBet(){
+
+
+let risk=
+document.getElementById("risk").value;
+
+
+
+let rate=0.02;
+
+
+
+if(risk=="low"){
+
+rate=0.01;
+
+}
+
+
+if(risk=="high"){
+
+rate=0.03;
+
+}
+
+
+
+return capital*rate;
+
+
+}
+
+
+
+
+
+// 下一注计算
+
+
+function nextBet(){
+
+
+let mode=
+document.getElementById("strategy").value;
+
+
+
+let bet=
+baseBet();
+
+
+
+
+// 平注
+
+if(mode=="flat"){
+
+return bet;
+
+}
+
+
+
+// 赢冲
+
+if(mode=="win"){
+
+
+if(winCount==0){
+
+return bet;
+
+}
+
+
+if(winCount==1){
+
+return bet*2;
+
+}
+
+
+return bet*3;
+
+
+}
+
+
+
+
+// 输撤
+
+if(mode=="stop"){
+
+
+if(loseCount==0){
+
+return bet;
+
+}
+
+
+if(loseCount==1){
+
+return bet/2;
+
+}
+
+
+return 0;
+
+
+}
+
+
+
+return bet;
+
+
+}
+
+
+
+
+
+// 输赢结算
+
+
+function settle(type){
+
+
+let bet=
+nextBet();
+
+
+
+if(type=="win"){
+
+
+capital+=bet;
+
+winCount++;
+
+loseCount=0;
+
+
+}
+
+
+
+if(type=="lose"){
+
+
+capital-=bet;
+
+loseCount++;
+
+winCount=0;
+
+
+}
+
+
+
+localStorage.setItem(
+"capital",
+capital
+);
+
+
+
+updateMoney();
+
+
+}
+
+
+
+
+
+// 显示资金
+
+
+function updateMoney(){
+
+
+let box=
+document.getElementById(
+"moneyInfo"
+);
+
+
+
+if(!box)return;
+
+
+
+box.innerHTML=
+
+"当前资金："+
+capital.toFixed(0)
+
++
+"<br>"
+
++
+
+"下一注建议："+
+nextBet().toFixed(0)
+
++
+"<br>"
+
++
+
+"连续赢："+
+winCount
+
++
+"<br>"
+
++
+
+"连续输："+
+loseCount;
+
+
+}
+
+
+
+
+
+// ==============================
+// 历史数据库
+// ==============================
+
+
+
+let database =
+JSON.parse(
+localStorage.getItem(
+"baccarat_database"
+)
+||
+"[]"
+);
+
+
+
+
+
+
+// 保存历史
+
+
+function saveDatabase(){
+
+
+database =
+database.concat(history);
+
+
+
+localStorage.setItem(
+"baccarat_database",
+JSON.stringify(database)
+);
 
 
 
 document.getElementById(
-"result"
+"databaseInfo"
 ).innerHTML=
 
-"庄次数:"
-+b
-+"<br>"
-
-+"闲次数:"
-+p
-+"<br><br>"
-
-+"分析:"
-+msg;
+"历史数据："+
+database.length+
+"局";
 
 
 }
 
 
 
-function clearData(){
 
-data=[];
 
-localStorage.removeItem(
-"baccarat"
+
+
+// ==============================
+// 相似走势搜索
+// ==============================
+
+
+
+function similarSearch(){
+
+
+
+let box=
+document.getElementById(
+"databaseInfo"
 );
 
-analysis();
+
+
+if(database.length<30){
+
+
+box.innerHTML=
+"历史数据不足";
+
+
+return;
+
 
 }
 
 
 
-analysis();
+
+let pattern=
+history.slice(-10).join("");
+
+
+
+let B=0;
+
+let P=0;
+
+
+
+
+for(
+let i=0;
+i<database.length-11;
+i++
+){
+
+
+
+let sample=
+database
+.slice(i,i+10)
+.join("");
+
+
+
+if(sample==pattern){
+
+
+
+if(database[i+10]=="B"){
+
+B++;
+
+}
+
+
+
+if(database[i+10]=="P"){
+
+P++;
+
+}
+
+
+
+}
+
+
+
+}
+
+
+
+box.innerHTML=
+
+"相似走势结果："
+
++
+"<br>"
+
++
+
+"之后庄："
++
+B
+
++
+
+"<br>"
+
++
+
+"之后闲："
++
+P;
+
+
+
+}
+
+
+
+
+updateMoney();
 
 
 </script>
