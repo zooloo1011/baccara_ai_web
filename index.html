@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Baccarat AI</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#eeeeee;
+text-align:center;
+}
+
+.box{
+background:white;
+margin:20px;
+padding:20px;
+border-radius:15px;
+}
+
+button{
+font-size:24px;
+padding:15px 25px;
+margin:8px;
+border-radius:10px;
+}
+
+#history{
+font-size:20px;
+word-wrap:break-word;
+}
+
+.result{
+font-size:22px;
+margin-top:20px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="box">
+
+<h1>
+Baccarat AI
+</h1>
+
+
+<h3>
+输入开奖结果
+</h3>
+
+
+<button onclick="add('B')">
+庄 B
+</button>
+
+
+<button onclick="add('P')">
+闲 P
+</button>
+
+
+<button onclick="add('T')">
+和 T
+</button>
+
+
+<h3>
+最近20局
+</h3>
+
+<div id="history">
+</div>
+
+
+<div class="result" id="result">
+等待数据
+</div>
+
+
+<button onclick="clearData()">
+清除记录
+</button>
+
+
+</div>
+
+
+
+<script>
+
+
+let data =
+JSON.parse(
+localStorage.getItem("baccarat")
+||"[]"
+);
+
+
+
+function add(x){
+
+data.push(x);
+
+
+if(data.length>100){
+
+data.shift();
+
+}
+
+
+localStorage.setItem(
+"baccarat",
+JSON.stringify(data)
+);
+
+
+analysis();
+
+}
+
+
+
+function analysis(){
+
+
+let last20 =
+data.slice(-20);
+
+
+
+document.getElementById(
+"history"
+).innerHTML =
+last20.join(" ");
+
+
+
+let b =
+last20.filter(
+x=>x=="B"
+).length;
+
+
+let p =
+last20.filter(
+x=>x=="P"
+).length;
+
+
+
+let msg="";
+
+
+
+if(b>p){
+
+msg="偏庄方向";
+
+}
+
+else if(p>b){
+
+msg="偏闲方向";
+
+}
+
+else{
+
+msg="暂无明显方向";
+
+}
+
+
+
+
+// 连续检测
+
+let last=data[data.length-1];
+
+let count=0;
+
+
+for(let i=data.length-1;i>=0;i--){
+
+if(data[i]==last){
+
+count++;
+
+}
+
+else{
+
+break;
+
+}
+
+}
+
+
+
+if(count>=3){
+
+msg += "<br>出现连续走势:"+last+count+"次";
+
+}
+
+
+
+document.getElementById(
+"result"
+).innerHTML=
+
+"庄次数:"
++b
++"<br>"
+
++"闲次数:"
++p
++"<br><br>"
+
++"分析:"
++msg;
+
+
+}
+
+
+
+function clearData(){
+
+data=[];
+
+localStorage.removeItem(
+"baccarat"
+);
+
+analysis();
+
+}
+
+
+
+analysis();
+
+
+</script>
+
+
+</body>
+
+</html>
