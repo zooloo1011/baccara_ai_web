@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Baccarat AI</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#eee;
+text-align:center;
+}
+
+.box{
+background:white;
+margin:20px;
+padding:20px;
+border-radius:15px;
+}
+
+button{
+font-size:25px;
+padding:15px;
+margin:5px;
+border-radius:10px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="box">
+
+
+<h1>
+Baccarat AI
+</h1>
+
+
+<h3>
+输入结果
+</h3>
+
+
+<button onclick="add('B')">
+庄 B
+</button>
+
+
+<button onclick="add('P')">
+闲 P
+</button>
+
+
+<button onclick="add('T')">
+和 T
+</button>
+
+
+
+<h3>
+最近记录
+</h3>
+
+<div id="records">
+</div>
+
+
+<h3>
+分析
+</h3>
+
+<div id="result">
+</div>
+
+
+
+</div>
+
+
+
+<script>
+
+
+async function add(x){
+
+
+let r=await fetch(
+"/add",
+{
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:
+JSON.stringify(
+{
+result:x
+}
+)
+
+});
+
+
+let d=await r.json();
+
+
+show(d);
+
+}
+
+
+
+function show(d){
+
+
+document.getElementById(
+"records"
+).innerHTML=
+d.记录.join(" ");
+
+
+
+document.getElementById(
+"result"
+).innerHTML=
+
+d.分析
++
+"<br><br>庄次数:"
++d.庄
++
+"<br>闲次数:"
++d.闲;
+
+}
+
+
+
+show(
+{{data|tojson}}
+);
+
+
+
+</script>
+
+
+</body>
+
+</html>
