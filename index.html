@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
 
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Baccarat AI Road Engine V7</title>
+<title>Baccarat AI Road Engine V8</title>
 
 
 <style>
@@ -20,17 +21,14 @@ body{
 
 margin:0;
 
-background:#050505;
+background:#030303;
 
-color:#ffffff;
+color:#fff;
 
 font-family:
-
--apple-system,
-BlinkMacSystemFont,
-"Segoe UI",
 "Microsoft YaHei",
-Arial;
+Arial,
+sans-serif;
 
 }
 
@@ -38,23 +36,21 @@ Arial;
 
 header{
 
-height:80px;
+height:85px;
 
 display:flex;
 
 align-items:center;
 
-padding:0 40px;
+padding-left:35px;
 
 background:#0b0b0b;
 
 border-bottom:1px solid #222;
 
-font-size:28px;
+font-size:30px;
 
 font-weight:900;
-
-letter-spacing:1px;
 
 }
 
@@ -62,11 +58,11 @@ letter-spacing:1px;
 
 main{
 
-max-width:1200px;
+max-width:1300px;
 
 margin:auto;
 
-padding:30px;
+padding:25px;
 
 }
 
@@ -78,15 +74,25 @@ background:#101010;
 
 border:1px solid #242424;
 
-border-radius:24px;
+border-radius:22px;
 
 padding:25px;
 
-margin-bottom:22px;
+margin-bottom:20px;
 
-box-shadow:
+}
 
-0 10px 40px rgba(0,0,0,.6);
+
+
+.title{
+
+font-size:20px;
+
+font-weight:800;
+
+margin-bottom:15px;
+
+color:#ddd;
 
 }
 
@@ -100,25 +106,13 @@ text-align:center;
 
 
 
-.label{
-
-color:#94a3b8;
-
-font-size:14px;
-
-letter-spacing:3px;
-
-}
-
-
-
 #signal{
 
-font-size:64px;
+font-size:60px;
 
 font-weight:900;
 
-margin:20px 0;
+margin:20px;
 
 }
 
@@ -126,11 +120,9 @@ margin:20px 0;
 
 #confidence{
 
-font-size:22px;
+font-size:24px;
 
 color:#22d3ee;
-
-font-weight:bold;
 
 }
 
@@ -138,17 +130,17 @@ font-weight:bold;
 
 button{
 
+padding:15px 30px;
+
 border:0;
 
-padding:16px 32px;
+border-radius:14px;
 
-margin:6px;
-
-border-radius:15px;
+margin:5px;
 
 font-size:18px;
 
-font-weight:800;
+font-weight:900;
 
 cursor:pointer;
 
@@ -156,31 +148,34 @@ cursor:pointer;
 
 
 
-.banker{
+.b{
 
 background:#dc2626;
 
-color:white;
+color:#fff;
 
 }
 
 
-.player{
+
+.p{
 
 background:#2563eb;
 
-color:white;
+color:#fff;
 
 }
 
 
-.tie{
+
+.t{
 
 background:#16a34a;
 
-color:white;
+color:#fff;
 
 }
+
 
 
 .reset{
@@ -193,7 +188,7 @@ color:white;
 
 
 
-.road{
+.roadBox{
 
 display:flex;
 
@@ -205,9 +200,9 @@ flex-wrap:wrap;
 
 .ball{
 
-width:42px;
+width:40px;
 
-height:42px;
+height:40px;
 
 border-radius:50%;
 
@@ -247,37 +242,12 @@ background:#16a34a;
 
 
 
-.analysis{
-
-font-size:17px;
-
-line-height:2;
-
-color:#cbd5e1;
-
-}
-
-
-
-.percent{
-
-font-size:32px;
-
-font-weight:900;
-
-color:#22d3ee;
-
-}
-
-
-
 .grid{
 
 display:grid;
 
 grid-template-columns:
-
-repeat(auto-fit,minmax(180px,1fr));
+repeat(auto-fit,minmax(220px,1fr));
 
 gap:15px;
 
@@ -285,13 +255,13 @@ gap:15px;
 
 
 
-.box{
+.panel{
 
-background:#171717;
+background:#181818;
+
+padding:18px;
 
 border-radius:15px;
-
-padding:15px;
 
 }
 
@@ -299,11 +269,38 @@ padding:15px;
 
 .big{
 
-font-size:30px;
+font-size:28px;
 
 font-weight:900;
 
 }
+
+
+
+.blue{
+
+color:#22d3ee;
+
+}
+
+
+
+.red{
+
+color:#ef4444;
+
+}
+
+
+
+.analysis{
+
+line-height:2;
+
+color:#cbd5e1;
+
+}
+
 
 
 </style>
@@ -316,7 +313,7 @@ font-weight:900;
 
 <header>
 
-🤖 BACCARAT AI ROAD ENGINE V7
+🤖 BACCARAT AI ROAD ENGINE V8
 
 </header>
 
@@ -328,11 +325,8 @@ font-weight:900;
 
 <div class="card center">
 
-
-<div class="label">
-
+<div>
 NEXT ROUND ANALYSIS
-
 </div>
 
 
@@ -345,7 +339,7 @@ WAIT
 
 <div id="confidence">
 
-等待路型形成
+等待走势
 
 </div>
 
@@ -359,28 +353,28 @@ WAIT
 <div class="card">
 
 
-<button class="banker" onclick="addResult('B')">
+<button class="b" onclick="add('B')">
 
 🔴 庄
 
 </button>
 
 
-<button class="player" onclick="addResult('P')">
+<button class="p" onclick="add('P')">
 
 🔵 闲
 
 </button>
 
 
-<button class="tie" onclick="addResult('T')">
+<button class="t" onclick="add('T')">
 
 🟢 和
 
 </button>
 
 
-<button class="reset" onclick="resetRoad()">
+<button class="reset" onclick="resetAll()">
 
 清除
 
@@ -396,14 +390,35 @@ WAIT
 <div class="card">
 
 
-<h2>
+<div class="title">
 
 珠盘路
 
-</h2>
+</div>
 
 
-<div id="road" class="road">
+<div id="beadRoad" class="roadBox">
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="card">
+
+
+<div class="title">
+
+大路结构
+
+</div>
+
+
+<div id="bigRoad" class="roadBox">
 
 </div>
 
@@ -417,24 +432,11 @@ WAIT
 <div class="card grid">
 
 
-<div class="box">
+<div class="panel">
 
-当前局数
+大路状态
 
-<div id="total" class="big">
-
-0
-
-</div>
-
-</div>
-
-
-<div class="box">
-
-当前路型
-
-<div id="type" class="big">
+<div id="roadType" class="big">
 
 -
 
@@ -443,11 +445,42 @@ WAIT
 </div>
 
 
-<div class="box">
 
-风险
+<div class="panel">
 
-<div id="risk" class="big">
+大眼路
+
+<div id="eyeRoad" class="big">
+
+-
+
+</div>
+
+</div>
+
+
+
+
+<div class="panel">
+
+小路
+
+<div id="smallRoad" class="big">
+
+-
+
+</div>
+
+</div>
+
+
+
+
+<div class="panel">
+
+蟑螂路
+
+<div id="cockRoad" class="big">
 
 -
 
@@ -464,31 +497,23 @@ WAIT
 
 <div class="card analysis" id="report">
 
-
-AI等待走势数据
-
+AI等待分析
 
 </div>
 
 
 
-</main>
+<script>
+    let results =
+JSON.parse(localStorage.getItem("BACCARAT_V8") || "[]");
 
 
 
-<!-- JavaScript 从这里开始 -->
-    <script>
-
-let roadData =
-JSON.parse(localStorage.getItem("BACCARAT_V7") || "[]");
-
-
-
-function saveData(){
+function save(){
 
 localStorage.setItem(
-"BACCARAT_V7",
-JSON.stringify(roadData)
+"BACCARAT_V8",
+JSON.stringify(results)
 );
 
 }
@@ -496,28 +521,13 @@ JSON.stringify(roadData)
 
 
 
+function add(x){
 
-function addResult(type){
+results.push(x);
 
-roadData.push(type);
+save();
 
-saveData();
-
-analyzeRoad();
-
-}
-
-
-
-
-
-function resetRoad(){
-
-roadData=[];
-
-saveData();
-
-analyzeRoad();
+analyze();
 
 }
 
@@ -525,38 +535,52 @@ analyzeRoad();
 
 
 
-function drawRoad(){
+function resetAll(){
 
-let box=document.getElementById("road");
+results=[];
+
+save();
+
+analyze();
+
+}
+
+
+
+
+
+// 珠盘路
+
+function drawBead(){
+
+let box=document.getElementById("beadRoad");
 
 box.innerHTML="";
 
 
-roadData.forEach(item=>{
+results.forEach(x=>{
 
-let el=document.createElement("div");
+let d=document.createElement("div");
 
-el.className="ball "+item;
+d.className="ball "+x;
 
-el.innerHTML=item;
+d.innerHTML=x;
 
-box.appendChild(el);
+box.appendChild(d);
 
 });
-
 
 }
 
 
 
 
+// 去掉和
 
-// 去除和局干扰
+function pure(){
 
-function validRoad(){
-
-return roadData.filter(
-x=>x!=="T"
+return results.filter(
+x=>x!="T"
 );
 
 }
@@ -564,14 +588,17 @@ x=>x!=="T"
 
 
 
-// 当前连续长度
+
+
+// 获取连续
 
 function getStreak(data){
 
-if(data.length===0)return 0;
+if(data.length===0)
+return 0;
 
 
-let count=1;
+let n=1;
 
 
 for(
@@ -580,9 +607,11 @@ i>=0;
 i--
 ){
 
-if(data[i]===data[data.length-1]){
+if(
+data[i]===data[data.length-1]
+){
 
-count++;
+n++;
 
 }else{
 
@@ -593,7 +622,7 @@ break;
 }
 
 
-return count;
+return n;
 
 }
 
@@ -601,37 +630,139 @@ return count;
 
 
 
-// 判断单跳
 
-function detectSingle(data){
+
+// 生成大路结构
+
+function buildBigRoad(data){
+
+
+let cols=[];
+
+
+let current=[];
+
+
+let last=null;
+
+
+
+data.forEach(x=>{
+
+
+if(x!==last){
+
+
+if(current.length)
+cols.push(current);
+
+
+current=[x];
+
+
+last=x;
+
+
+}else{
+
+
+current.push(x);
+
+
+}
+
+
+});
+
+
+if(current.length)
+cols.push(current);
+
+
+
+return cols;
+
+}
+
+
+
+
+
+
+function drawBigRoad(cols){
+
+
+let box=document.getElementById("bigRoad");
+
+
+box.innerHTML="";
+
+
+
+cols.forEach(col=>{
+
+
+let c=document.createElement("div");
+
+
+col.forEach(x=>{
+
+
+let b=document.createElement("div");
+
+
+b.className="ball "+x;
+
+b.innerHTML=x;
+
+
+c.appendChild(b);
+
+
+});
+
+
+box.appendChild(c);
+
+
+});
+
+}
+
+
+
+
+// 单跳检测
+
+function singleJump(data){
+
 
 if(data.length<6)
 return false;
 
 
-let count=0;
-
 
 for(
 let i=data.length-1;
-i>0;
+i>data.length-6;
 i--
 ){
 
-if(data[i]!==data[i-1]){
 
-count++;
+if(
+data[i]===data[i-1]
+){
 
-}else{
-
-break;
-
-}
+return false;
 
 }
 
 
-return count>=5;
+}
+
+
+return true;
+
 
 }
 
@@ -639,9 +770,11 @@ return count>=5;
 
 
 
-// 判断排排连
 
-function detectPair(data){
+// 排排连检测
+
+function pairRoad(data){
+
 
 if(data.length<6)
 return false;
@@ -651,15 +784,84 @@ return false;
 let a=data.slice(-6);
 
 
+return (
+
+a[0]==a[1]&&
+
+a[2]==a[3]&&
+
+a[4]==a[5]
+
+);
+
+
+}
+
+
+
+
+
+
+
+// 双节奏检测
+
+function doubleRoad(data){
+
+
+if(data.length<8)
+return false;
+
+
+let a=data.slice(-8);
+
+
 
 return (
 
-a[0]===a[1] &&
+a[0]==a[1]&&
 
-a[2]===a[3] &&
+a[2]==a[3]&&
 
-a[4]===a[5]
+a[4]==a[5]&&
 
+a[6]==a[7]
+
+);
+
+
+
+}
+
+
+
+
+
+
+
+
+// 主路型分析
+
+
+function roadAnalysis(data){
+
+
+
+let type="混合";
+
+let reason=[];
+
+
+
+let streak=getStreak(data);
+
+
+
+if(streak>=3){
+
+type="长龙趋势";
+
+reason.push(
+"连续走势形成"
 );
 
 }
@@ -667,28 +869,150 @@ a[4]===a[5]
 
 
 
+if(singleJump(data)){
 
-// 判断长龙风险
+type="单跳结构";
 
-function dragonScore(streak){
+reason.push(
+"交替节奏稳定"
+);
 
-if(streak<=2)
-return 0;
-
-
-if(streak===3)
-return 10;
+}
 
 
-if(streak===4)
-return 20;
 
 
-if(streak===5)
-return 35;
+if(pairRoad(data)){
+
+type="排排连结构";
+
+reason.push(
+"两连周期"
+);
+
+}
 
 
-return 45;
+
+
+if(doubleRoad(data)){
+
+type="双跳结构";
+
+reason.push(
+"周期重复"
+);
+
+}
+
+
+
+return {
+
+type,
+
+streak,
+
+reason
+
+};
+
+
+}
+    
+
+
+// =============================
+// 下三路模拟分析
+// =============================
+
+
+
+function downRoadAnalysis(data,road){
+
+
+let eye=0;
+
+let small=0;
+
+let cock=0;
+
+
+
+let type="中性";
+
+
+
+// 大眼路逻辑
+// 观察大路变化节奏
+
+if(road.type==="长龙趋势"){
+
+eye+=15;
+
+cock+=12;
+
+}
+
+
+if(road.type==="单跳结构"){
+
+eye+=12;
+
+small+=15;
+
+}
+
+
+
+if(road.type==="排排连结构"){
+
+small+=12;
+
+cock+=10;
+
+}
+
+
+
+
+if(data.length>10){
+
+eye+=5;
+
+cock+=5;
+
+}
+
+
+
+let max=Math.max(
+eye,
+small,
+cock
+);
+
+
+
+if(max===eye)
+type="支持趋势";
+
+else if(max===small)
+type="节奏明显";
+
+else if(max===cock)
+type="方向偏移";
+
+
+return{
+
+eye,
+small,
+cock,
+type
+
+};
+
 
 }
 
@@ -698,19 +1022,172 @@ return 45;
 
 
 
-function analyzeRoad(){
+// =============================
+// AI综合评分
+// =============================
 
 
 
-drawRoad();
+function calculateAI(data,road,down){
 
 
-document.getElementById("total").innerHTML=
-roadData.length;
+let banker=50;
+
+let player=50;
+
+
+let reason=[];
 
 
 
-let data=validRoad();
+// 大路权重
+
+
+if(road.type==="长龙趋势"){
+
+
+if(
+data[data.length-1]==="B"
+){
+
+banker+=18;
+
+reason.push("庄趋势延续");
+
+}
+else{
+
+player+=18;
+
+reason.push("闲趋势延续");
+
+}
+
+
+}
+
+
+
+if(road.type==="单跳结构"){
+
+
+if(
+data[data.length-1]==="B"
+){
+
+player+=12;
+
+}
+else{
+
+banker+=12;
+
+}
+
+
+reason.push("交替节奏");
+
+}
+
+
+
+if(road.type==="排排连结构"){
+
+reason.push("周期节奏");
+
+
+}
+
+
+
+
+
+
+// 下三路辅助
+
+
+banker +=
+
+(down.eye+
+down.small+
+down.cock)/4;
+
+
+
+player +=
+
+(down.eye+
+down.small+
+down.cock)/5;
+
+
+
+// 风险修正
+
+
+let diff=Math.abs(
+banker-player
+);
+
+
+
+let confidence=
+Math.min(
+90,
+50+diff
+);
+
+
+
+// 没有一致性降低
+
+if(diff<8){
+
+confidence=45;
+
+}
+
+
+
+return{
+
+banker:
+(banker/(banker+player)*100).toFixed(1),
+
+player:
+(player/(banker+player)*100).toFixed(1),
+
+confidence,
+
+reason
+
+};
+
+
+}
+
+
+
+
+
+
+
+
+// =============================
+// 主程序
+// =============================
+
+
+
+function analyze(){
+
+
+
+drawBead();
+
+
+
+let data=pure();
 
 
 
@@ -720,254 +1197,83 @@ if(data.length<3){
 signal.innerHTML="🟡 WAIT";
 
 confidence.innerHTML=
-"等待更多路型";
-
-report.innerHTML=
-"当前没有形成有效结构";
+"等待走势";
 
 
 return;
 
-}
-
-
-
-
-
-let banker=50;
-
-let player=50;
-
-
-let reasons=[];
-
-
-let type="混合";
-
-
-
-
-
-let streak=
-getStreak(data);
-
-
-
-
-
-// 长龙分析
-
-
-if(streak>=3){
-
-
-type="长龙";
-
-
-let power=
-dragonScore(streak);
-
-
-
-if(
-data[data.length-1]==="B"
-){
-
-banker+=power;
-
-reasons.push(
-"庄连续走势"
-);
-
-
-}else{
-
-
-player+=power;
-
-reasons.push(
-"闲连续走势"
-);
-
 
 }
 
 
 
-}
+let big=buildBigRoad(data);
+
+
+drawBigRoad(big);
 
 
 
+let road=roadAnalysis(data);
 
 
 
-
-// 单跳分析
-
-
-if(
-detectSingle(data)
-){
-
-
-type="单跳";
-
-
-reasons.push(
-"交替节奏"
+let down=
+downRoadAnalysis(
+data,
+road
 );
 
 
 
-if(
-data[data.length-1]==="B"
-){
-
-player+=15;
-
-}else{
-
-banker+=15;
-
-}
-
-
-}
-
-
-
-
-
-
-
-// 排排连分析
-
-
-if(
-detectPair(data)
-){
-
-
-type="排排连";
-
-
-reasons.push(
-"周期排列"
-);
-
-
-}
-
-
-
-
-
-// 模拟下三路一致性
-
-
-let bigEye=0;
-
-let small=0;
-
-let cockroach=0;
-
-
-
-if(
-detectSingle(data)
-){
-
-bigEye+=12;
-
-small+=8;
-
-cockroach+=8;
-
-}
-
-
-
-if(
-streak>=3
-){
-
-bigEye+=10;
-
-cockroach+=12;
-
-}
-
-
-
-
-
-
-banker+=
-bigEye/2+
-small/2+
-cockroach/2;
-
-
-
-player+=
-10-
-(bigEye+small+cockroach)/10;
-
-
-
-
-
-
-
-let total=
-
-banker+player;
-
-
-
-let bankerPct=
-
-(banker/total*100).toFixed(1);
-
-
-
-let playerPct=
-
-(player/total*100).toFixed(1);
-
-
-
-
-
-let diff=
-
-Math.abs(
-banker-player
-);
-
-
-
-let confidence=
-
-Math.min(
-90,
-50+diff
+let ai=
+calculateAI(
+data,
+road,
+down
 );
 
 
 
 
 
-let result="🟡 WAIT";
+
+roadType.innerHTML=
+road.type;
+
+
+eyeRoad.innerHTML=
+down.type;
+
+
+smallRoad.innerHTML=
+down.small>10?
+"支持":
+"观察";
 
 
 
-if(confidence>=58){
+cockRoad.innerHTML=
+down.cock>10?
+"支持":
+"观察";
 
 
-result=
 
-banker>player?
+
+
+
+let output="🟡 WAIT";
+
+
+
+if(
+ai.confidence>=58
+){
+
+
+output=
+ai.banker>ai.player?
 
 "🔴 庄倾向":
 
@@ -978,37 +1284,16 @@ banker>player?
 
 
 
+signal.innerHTML=
+output;
 
-
-
-signal.innerHTML=result;
 
 
 confidence.innerHTML=
-
-"AI综合信号 "+
-confidence+
+"AI信号 "+
+ai.confidence+
 "%";
 
-
-
-
-
-document.getElementById("type").innerHTML=
-type;
-
-
-document.getElementById("risk").innerHTML=
-
-confidence>75?
-
-"低":
-
-confidence>60?
-
-"中":
-
-"高";
 
 
 
@@ -1018,66 +1303,61 @@ confidence>60?
 report.innerHTML=
 
 
-"大路判断："+
-type+
+"当前路型："+
+road.type+
 
 "<br><br>"+
 
 
 "庄倾向："+
 "<span class='percent'>"+
-bankerPct+
+ai.banker+
 "%</span>"+
-
 
 "<br>"+
 
 
 "闲倾向："+
 "<span class='percent'>"+
-playerPct+
+ai.player+
 "%</span>"+
 
 
 "<br><br>"+
 
 
-"连续阶段："+
-
-streak+
-
-"<br><br>"+
-
-
-"路型依据："+
-(
-reasons.join(" / ")
-||
-"无明显结构"
-)+
-
+"长龙阶段："+
+road.streak+
 
 "<br><br>"+
 
 
 "下三路："+
 "<br>"+
-"✓ 大眼路分析"+
+"大眼路："+down.eye+
 "<br>"+
-"✓ 小路分析"+
+"小路："+down.small+
 "<br>"+
-"✓ 蟑螂路分析"+
+"蟑螂路："+down.cock+
+
 "<br><br>"+
 
 
+"分析依据："+
+(
+ai.reason.join(" / ")
+||
+"结构不足"
+)+
+
+
+"<br><br>"+
+
 "AI状态："+
 (
-confidence>=58?
-
-"形成方向":
-
-"继续观察"
-
+ai.confidence>=58?
+"形成观察信号":
+"等待确认"
 );
 
 
@@ -1087,8 +1367,8 @@ confidence>=58?
 
 
 
+analyze();
 
-analyzeRoad();
 
 
 </script>
