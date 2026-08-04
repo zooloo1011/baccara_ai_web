@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
 
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Baccarat AI Ultimate Pro</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>Baccarat AI Road Engine V7</title>
 
 
 <style>
@@ -23,11 +20,15 @@ body{
 
 margin:0;
 
-background:#020617;
+background:#050505;
 
-color:white;
+color:#ffffff;
 
 font-family:
+
+-apple-system,
+BlinkMacSystemFont,
+"Segoe UI",
 "Microsoft YaHei",
 Arial;
 
@@ -37,105 +38,89 @@ Arial;
 
 header{
 
-height:90px;
-
-background:
-linear-gradient(90deg,#111827,#020617);
+height:80px;
 
 display:flex;
 
 align-items:center;
 
-padding:0 30px;
+padding:0 40px;
 
-font-size:30px;
+background:#0b0b0b;
 
-font-weight:bold;
+border-bottom:1px solid #222;
 
-color:#00eaff;
+font-size:28px;
 
-}
+font-weight:900;
 
-
-
-.online{
-
-margin-left:auto;
-
-font-size:15px;
-
-color:#22c55e;
+letter-spacing:1px;
 
 }
 
 
 
+main{
 
-.container{
-
-padding:25px;
-
-max-width:1400px;
+max-width:1200px;
 
 margin:auto;
 
+padding:30px;
+
 }
 
 
 
+.card{
 
+background:#101010;
 
-.panel{
+border:1px solid #242424;
 
-background:#111827;
-
-border-radius:18px;
+border-radius:24px;
 
 padding:25px;
 
-margin-bottom:25px;
+margin-bottom:22px;
 
 box-shadow:
-0 0 25px #000;
+
+0 10px 40px rgba(0,0,0,.6);
 
 }
 
 
 
-
-
-.ai-box{
+.center{
 
 text-align:center;
 
-border:
-1px solid #00eaff;
+}
 
-background:
-linear-gradient(
-135deg,
-#020617,
-#111827
-);
+
+
+.label{
+
+color:#94a3b8;
+
+font-size:14px;
+
+letter-spacing:3px;
 
 }
 
 
 
+#signal{
 
+font-size:64px;
 
-#prediction{
+font-weight:900;
 
-font-size:60px;
-
-font-weight:bold;
-
-margin:20px;
-
-color:#00eaff;
+margin:20px 0;
 
 }
-
 
 
 
@@ -143,73 +128,27 @@ color:#00eaff;
 
 font-size:22px;
 
-color:#94a3b8;
+color:#22d3ee;
+
+font-weight:bold;
 
 }
-
-
-
-
-.grid{
-
-display:grid;
-
-grid-template-columns:
-repeat(auto-fit,minmax(180px,1fr));
-
-gap:20px;
-
-}
-
-
-
-
-.card{
-
-background:#0f172a;
-
-padding:20px;
-
-border-radius:12px;
-
-}
-
-
-
-.card-title{
-
-color:#94a3b8;
-
-}
-
-
-.number{
-
-font-size:35px;
-
-color:#00eaff;
-
-margin-top:10px;
-
-}
-
-
 
 
 
 button{
 
-padding:14px 22px;
-
-margin:5px;
-
 border:0;
 
-border-radius:10px;
+padding:16px 32px;
 
-font-size:16px;
+margin:6px;
 
-font-weight:bold;
+border-radius:15px;
+
+font-size:18px;
+
+font-weight:800;
 
 cursor:pointer;
 
@@ -226,7 +165,6 @@ color:white;
 }
 
 
-
 .player{
 
 background:#2563eb;
@@ -234,7 +172,6 @@ background:#2563eb;
 color:white;
 
 }
-
 
 
 .tie{
@@ -246,37 +183,23 @@ color:white;
 }
 
 
+.reset{
 
-.main{
-
-background:#00eaff;
-
-color:#020617;
-
-}
-
-
-
-
-input{
-
-width:80%;
-
-padding:15px;
-
-background:#020617;
-
-border:1px solid #334155;
-
-border-radius:10px;
+background:#333;
 
 color:white;
 
-font-size:18px;
-
 }
 
 
+
+.road{
+
+display:flex;
+
+flex-wrap:wrap;
+
+}
 
 
 
@@ -286,17 +209,17 @@ width:42px;
 
 height:42px;
 
-display:inline-flex;
+border-radius:50%;
 
-justify-content:center;
+display:flex;
 
 align-items:center;
 
-border-radius:50%;
+justify-content:center;
 
 margin:5px;
 
-font-weight:bold;
+font-weight:900;
 
 }
 
@@ -309,13 +232,11 @@ background:#dc2626;
 }
 
 
-
 .P{
 
 background:#2563eb;
 
 }
-
 
 
 .T{
@@ -326,73 +247,68 @@ background:#16a34a;
 
 
 
+.analysis{
+
+font-size:17px;
+
+line-height:2;
+
+color:#cbd5e1;
+
+}
 
 
-.road{
 
-background:#020617;
+.percent{
+
+font-size:32px;
+
+font-weight:900;
+
+color:#22d3ee;
+
+}
+
+
+
+.grid{
+
+display:grid;
+
+grid-template-columns:
+
+repeat(auto-fit,minmax(180px,1fr));
+
+gap:15px;
+
+}
+
+
+
+.box{
+
+background:#171717;
+
+border-radius:15px;
 
 padding:15px;
 
-border-radius:12px;
-
-min-height:80px;
-
 }
 
 
 
+.big{
 
-.progress{
+font-size:30px;
 
-height:22px;
-
-background:#334155;
-
-border-radius:20px;
-
-overflow:hidden;
+font-weight:900;
 
 }
-
-
-
-.bar{
-
-height:100%;
-
-background:#00eaff;
-
-width:0%;
-
-}
-
-
-
-
-.report{
-
-background:#020617;
-
-padding:20px;
-
-border-radius:12px;
-
-line-height:1.8;
-
-color:#00eaff;
-
-}
-
-
-
 
 
 </style>
 
-
 </head>
-
 
 
 <body>
@@ -400,147 +316,112 @@ color:#00eaff;
 
 <header>
 
-🤖 Baccarat AI Ultimate Pro
-
-
-<div class="online">
-
-● AI ENGINE ONLINE
-
-</div>
-
+🤖 BACCARAT AI ROAD ENGINE V7
 
 </header>
 
 
 
-
-
-<div class="container">
-
-
-
-<!-- AI预测 -->
-
-<div class="panel ai-box">
-
-
-<h2>
-
-NEXT ROUND AI SIGNAL
-
-</h2>
+<main>
 
 
 
-<div id="prediction">
+<div class="card center">
 
-等待数据
+
+<div class="label">
+
+NEXT ROUND ANALYSIS
 
 </div>
 
+
+<div id="signal">
+
+WAIT
+
+</div>
 
 
 <div id="confidence">
 
-输入历史记录开始分析
+等待路型形成
 
 </div>
-
-
-
-</div>
-
-
-
-
-
-
-
-
-<!-- 输入 -->
-
-<div class="panel">
-
-
-<h2>
-
-历史数据输入
-
-</h2>
-
-
-<input id="historyInput"
-
-placeholder="例如 BPPBBTBBP">
-
-
-<br><br>
-
-
-
-<button class="main"
-onclick="loadInput()">
-
-分析数据
-
-</button>
-
-
-<button class="banker"
-onclick="add('B')">
-
-庄 BANKER
-
-</button>
-
-
-<button class="player"
-onclick="add('P')">
-
-闲 PLAYER
-
-</button>
-
-
-<button class="tie"
-onclick="add('T')">
-
-和 TIE
-
-</button>
-
-
-
-<button onclick="clearData()">
-
-清空
-
-</button>
 
 
 </div>
 
 
 
-
-
-
-<!-- 数据 -->
-
-<div class="grid">
 
 
 <div class="card">
 
-<div class="card-title">
 
-总局数
+<button class="banker" onclick="addResult('B')">
+
+🔴 庄
+
+</button>
+
+
+<button class="player" onclick="addResult('P')">
+
+🔵 闲
+
+</button>
+
+
+<button class="tie" onclick="addResult('T')">
+
+🟢 和
+
+</button>
+
+
+<button class="reset" onclick="resetRoad()">
+
+清除
+
+</button>
+
 
 </div>
 
-<div class="number"
-id="total">
+
+
+
+
+<div class="card">
+
+
+<h2>
+
+珠盘路
+
+</h2>
+
+
+<div id="road" class="road">
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="card grid">
+
+
+<div class="box">
+
+当前局数
+
+<div id="total" class="big">
 
 0
 
@@ -549,60 +430,26 @@ id="total">
 </div>
 
 
+<div class="box">
 
+当前路型
 
-<div class="card">
+<div id="type" class="big">
 
-<div class="card-title">
-
-庄
-
-</div>
-
-<div class="number"
-id="banker">
-
-0
+-
 
 </div>
 
 </div>
 
 
+<div class="box">
 
+风险
 
-<div class="card">
+<div id="risk" class="big">
 
-<div class="card-title">
-
-闲
-
-</div>
-
-<div class="number"
-id="player">
-
-0
-
-</div>
-
-</div>
-
-
-
-
-<div class="card">
-
-<div class="card-title">
-
-和
-
-</div>
-
-<div class="number"
-id="tie">
-
-0
+-
 
 </div>
 
@@ -615,244 +462,48 @@ id="tie">
 
 
 
-
-<div class="panel">
-
-
-<h2>
-
-历史路单
-
-</h2>
+<div class="card analysis" id="report">
 
 
-<div class="road"
-id="road">
-
-</div>
+AI等待走势数据
 
 
 </div>
 
 
 
+</main>
 
 
-<div class="panel">
 
+<!-- JavaScript 从这里开始 -->
+    <script>
 
-<h2>
+let roadData =
+JSON.parse(localStorage.getItem("BACCARAT_V7") || "[]");
 
-AI趋势评分
 
-</h2>
 
-
-<p>
-
-庄趋势
-
-</p>
-
-
-<div class="progress">
-
-<div class="bar"
-id="bankerBar">
-
-</div>
-
-</div>
-
-
-
-
-<p>
-
-闲趋势
-
-</p>
-
-
-<div class="progress">
-
-<div class="bar"
-id="playerBar">
-
-</div>
-
-</div>
-
-
-
-</div>
-
-
-
-
-<div class="panel">
-
-
-<h2>
-
-AI分析报告
-
-</h2>
-
-
-<div class="report"
-id="report">
-
-等待分析
-
-</div>
-
-
-</div>
-
-
-
-
-<div class="panel">
-
-
-<h2>
-
-走势曲线
-
-</h2>
-
-
-<canvas id="chart">
-
-</canvas>
-
-
-</div>
-
-
-
-<script>
-    // ===============================
-// Baccarat AI Engine
-// ===============================
-
-
-let history=[];
-
-let chart;
-
-
-
-// 添加结果
-
-function add(x){
-
-history.push(x);
-
-save();
-
-update();
-
-}
-
-
-
-
-// 批量输入
-
-function loadInput(){
-
-
-let text=
-document
-.getElementById(
-"historyInput"
-)
-.value
-.toUpperCase();
-
-
-history=[];
-
-
-for(let x of text){
-
-
-if(
-x==="B"||
-x==="P"||
-x==="T"
-){
-
-history.push(x);
-
-}
-
-
-}
-
-
-save();
-
-update();
-
-
-}
-
-
-
-
-// 清空
-
-
-function clearData(){
-
-history=[];
-
-localStorage.removeItem(
-"bac_ai"
-);
-
-update();
-
-}
-
-
-
-// 保存
-
-
-function save(){
+function saveData(){
 
 localStorage.setItem(
-"bac_ai",
-JSON.stringify(history)
+"BACCARAT_V7",
+JSON.stringify(roadData)
 );
 
 }
 
 
 
-// 读取
 
 
-function load(){
+function addResult(type){
 
+roadData.push(type);
 
-let d=
-localStorage.getItem(
-"bac_ai"
-);
+saveData();
 
-
-if(d){
-
-history=
-JSON.parse(d);
-
-}
-
+analyzeRoad();
 
 }
 
@@ -860,102 +511,36 @@ JSON.parse(d);
 
 
 
-// ===============================
-// 数据统计
-// ===============================
+function resetRoad(){
 
+roadData=[];
 
-function update(){
+saveData();
 
-
-let B=
-history.filter(
-x=>x==="B"
-).length;
-
-
-let P=
-history.filter(
-x=>x==="P"
-).length;
-
-
-let T=
-history.filter(
-x=>x==="T"
-).length;
-
-
-
-total.innerHTML=
-history.length;
-
-
-banker.innerHTML=B;
-
-
-player.innerHTML=P;
-
-
-tie.innerHTML=T;
-
-
-
-drawRoad();
-
-
-AI();
-
-
-
-drawChart();
-
-
+analyzeRoad();
 
 }
 
 
 
-
-
-
-// ===============================
-// 路单显示
-// ===============================
 
 
 function drawRoad(){
 
-
-let box=
-document.getElementById(
-"road"
-);
-
+let box=document.getElementById("road");
 
 box.innerHTML="";
 
 
+roadData.forEach(item=>{
 
-history.forEach(x=>{
+let el=document.createElement("div");
 
+el.className="ball "+item;
 
-let e=
-document.createElement(
-"span"
-);
+el.innerHTML=item;
 
-
-e.className=
-"ball "+x;
-
-
-e.innerHTML=x;
-
-
-box.appendChild(e);
-
-
+box.appendChild(el);
 
 });
 
@@ -966,145 +551,49 @@ box.appendChild(e);
 
 
 
+// 去除和局干扰
 
-// ===============================
-// AI分析模型
-// ===============================
+function validRoad(){
 
+return roadData.filter(
+x=>x!=="T"
+);
 
-function AI(){
+}
 
 
-if(history.length<5)
 
-return;
 
+// 当前连续长度
 
+function getStreak(data){
 
-let total=
-history.length;
+if(data.length===0)return 0;
 
 
-
-let B=
-history.filter(
-x=>x==="B"
-).length;
-
-
-let P=
-history.filter(
-x=>x==="P"
-).length;
-
-
-
-let T=
-history.filter(
-x=>x==="T"
-).length;
-
-
-
-
-
-
-let bankerScore=50;
-
-
-let playerScore=50;
-
-
-
-
-
-// ----------------
-// 历史比例
-// ----------------
-
-
-if(B>P)
-
-bankerScore+=10;
-
-else
-
-playerScore+=10;
-
-
-
-
-
-
-// ----------------
-// 最近趋势
-// ----------------
-
-
-let recent=
-history.slice(-20);
-
-
-
-let rb=
-recent.filter(
-x=>"B"===x
-).length;
-
-
-
-let rp=
-recent.filter(
-x=>"P"===x
-).length;
-
-
-
-if(rb>rp)
-
-bankerScore+=15;
-
-else
-
-playerScore+=15;
-
-
-
-
-
-
-
-
-// ----------------
-// 连续走势
-// ----------------
-
-
-let last=
-history[
-history.length-1
-];
-
-
-
-let streak=1;
+let count=1;
 
 
 for(
-let i=history.length-2;
+let i=data.length-2;
 i>=0;
 i--
 ){
 
+if(data[i]===data[data.length-1]){
 
-if(history[i]===last)
+count++;
 
-streak++;
-
-else
+}else{
 
 break;
 
+}
+
+}
+
+
+return count;
 
 }
 
@@ -1112,79 +601,196 @@ break;
 
 
 
-if(last==="B")
+// 判断单跳
 
-bankerScore+=
-streak*3;
+function detectSingle(data){
 
-
-
-if(last==="P")
-
-playerScore+=
-streak*3;
+if(data.length<6)
+return false;
 
 
-
-
-
-
-// ----------------
-// 反转压力
-// ----------------
-
-
-let reverse=0;
-
-
-
-if(streak>=5){
-
-
-reverse=
-streak*3;
-
-
-
-if(last==="B")
-
-playerScore+=reverse;
-
-
-else
-
-bankerScore+=reverse;
-
-
-
-}
-
-
-
-
-
-// ----------------
-// 单跳检测
-// ----------------
-
-
-let single=true;
-
+let count=0;
 
 
 for(
-let i=1;
-i<history.length;
-i++
+let i=data.length-1;
+i>0;
+i--
 ){
+
+if(data[i]!==data[i-1]){
+
+count++;
+
+}else{
+
+break;
+
+}
+
+}
+
+
+return count>=5;
+
+}
+
+
+
+
+
+// 判断排排连
+
+function detectPair(data){
+
+if(data.length<6)
+return false;
+
+
+
+let a=data.slice(-6);
+
+
+
+return (
+
+a[0]===a[1] &&
+
+a[2]===a[3] &&
+
+a[4]===a[5]
+
+);
+
+}
+
+
+
+
+
+// 判断长龙风险
+
+function dragonScore(streak){
+
+if(streak<=2)
+return 0;
+
+
+if(streak===3)
+return 10;
+
+
+if(streak===4)
+return 20;
+
+
+if(streak===5)
+return 35;
+
+
+return 45;
+
+}
+
+
+
+
+
+
+
+function analyzeRoad(){
+
+
+
+drawRoad();
+
+
+document.getElementById("total").innerHTML=
+roadData.length;
+
+
+
+let data=validRoad();
+
+
+
+if(data.length<3){
+
+
+signal.innerHTML="🟡 WAIT";
+
+confidence.innerHTML=
+"等待更多路型";
+
+report.innerHTML=
+"当前没有形成有效结构";
+
+
+return;
+
+}
+
+
+
+
+
+let banker=50;
+
+let player=50;
+
+
+let reasons=[];
+
+
+let type="混合";
+
+
+
+
+
+let streak=
+getStreak(data);
+
+
+
+
+
+// 长龙分析
+
+
+if(streak>=3){
+
+
+type="长龙";
+
+
+let power=
+dragonScore(streak);
+
 
 
 if(
-history[i]===
-history[i-1]
-)
+data[data.length-1]==="B"
+){
 
-single=false;
+banker+=power;
+
+reasons.push(
+"庄连续走势"
+);
+
+
+}else{
+
+
+player+=power;
+
+reasons.push(
+"闲连续走势"
+);
+
+
+}
 
 
 
@@ -1192,31 +798,38 @@ single=false;
 
 
 
-if(single){
-
-bankerScore-=5;
-
-playerScore-=5;
-
-}
 
 
 
 
-
-// ----------------
-// 平衡修正
-// ----------------
+// 单跳分析
 
 
 if(
-Math.abs(B-P)<5
+detectSingle(data)
 ){
 
 
-bankerScore+=5;
+type="单跳";
 
-playerScore+=5;
+
+reasons.push(
+"交替节奏"
+);
+
+
+
+if(
+data[data.length-1]==="B"
+){
+
+player+=15;
+
+}else{
+
+banker+=15;
+
+}
 
 
 }
@@ -1225,68 +838,140 @@ playerScore+=5;
 
 
 
-// 最终评分
 
 
-let sum=
-bankerScore+
-playerScore;
+// 排排连分析
 
 
-
-let bp=
-(bankerScore/sum*100)
-.toFixed(1);
-
+if(
+detectPair(data)
+){
 
 
-let pp=
-(playerScore/sum*100)
-.toFixed(1);
+type="排排连";
 
 
+reasons.push(
+"周期排列"
+);
 
 
-
-bankerBar.style.width=
-bp+"%";
-
-
-
-playerBar.style.width=
-pp+"%";
+}
 
 
 
 
 
-
-let result;
-
+// 模拟下三路一致性
 
 
-if(bankerScore>playerScore){
+let bigEye=0;
+
+let small=0;
+
+let cockroach=0;
+
+
+
+if(
+detectSingle(data)
+){
+
+bigEye+=12;
+
+small+=8;
+
+cockroach+=8;
+
+}
+
+
+
+if(
+streak>=3
+){
+
+bigEye+=10;
+
+cockroach+=12;
+
+}
+
+
+
+
+
+
+banker+=
+bigEye/2+
+small/2+
+cockroach/2;
+
+
+
+player+=
+10-
+(bigEye+small+cockroach)/10;
+
+
+
+
+
+
+
+let total=
+
+banker+player;
+
+
+
+let bankerPct=
+
+(banker/total*100).toFixed(1);
+
+
+
+let playerPct=
+
+(player/total*100).toFixed(1);
+
+
+
+
+
+let diff=
+
+Math.abs(
+banker-player
+);
+
+
+
+let confidence=
+
+Math.min(
+90,
+50+diff
+);
+
+
+
+
+
+let result="🟡 WAIT";
+
+
+
+if(confidence>=58){
 
 
 result=
-"🔴 BANKER 庄";
 
+banker>player?
 
-prediction.style.color=
-"#ef4444";
+"🔴 庄倾向":
 
-
-}
-
-else{
-
-
-result=
-"🔵 PLAYER 闲";
-
-
-prediction.style.color=
-"#3b82f6";
+"🔵 闲倾向";
 
 
 }
@@ -1295,30 +980,35 @@ prediction.style.color=
 
 
 
-prediction.innerHTML=
-result;
 
+signal.innerHTML=result;
 
 
 confidence.innerHTML=
 
-`
-
-AI置信度:
-${Math.max(bp,pp)}%
-
-
-<br>
-
-当前:
-${last}
-
-连续:
-${streak}局
+"AI综合信号 "+
+confidence+
+"%";
 
 
-`;
 
+
+
+document.getElementById("type").innerHTML=
+type;
+
+
+document.getElementById("risk").innerHTML=
+
+confidence>75?
+
+"低":
+
+confidence>60?
+
+"中":
+
+"高";
 
 
 
@@ -1327,316 +1017,83 @@ ${streak}局
 
 report.innerHTML=
 
-`
 
-<b>
-AI DATA REPORT
-</b>
+"大路判断："+
+type+
 
-
-<br><br>
+"<br><br>"+
 
 
-样本:
-${total}局
+"庄倾向："+
+"<span class='percent'>"+
+bankerPct+
+"%</span>"+
 
 
-<br>
+"<br>"+
 
 
-庄:
-${B}
+"闲倾向："+
+"<span class='percent'>"+
+playerPct+
+"%</span>"+
 
 
-&nbsp;
+"<br><br>"+
 
 
-闲:
-${P}
+"连续阶段："+
+
+streak+
+
+"<br><br>"+
 
 
-&nbsp;
+"路型依据："+
+(
+reasons.join(" / ")
+||
+"无明显结构"
+)+
 
 
-和:
-${T}
+"<br><br>"+
 
 
-
-<br><br>
-
-
-最近20局:
-
-${recent.join(" ")}
-
-
-
-<br><br>
+"下三路："+
+"<br>"+
+"✓ 大眼路分析"+
+"<br>"+
+"✓ 小路分析"+
+"<br>"+
+"✓ 蟑螂路分析"+
+"<br><br>"+
 
 
-走势:
+"AI状态："+
+(
+confidence>=58?
 
-${
-streak>=4?
-"长龙状态":
-"正常"
-}
+"形成方向":
 
+"继续观察"
 
-
-<br><br>
-
-
-单跳:
-
-${
-single?
-"发现单跳":
-"无"
-}
-
-
-
-<br><br>
-
-
-反转压力:
-
-${reverse}
-
-
-
-<br><br>
-
-
-预测:
-
-<b>
-
-${result}
-
-</b>
-
-
-`;
-
-
-
-}
-    
-// ===============================
-// 趋势图
-// ===============================
-
-
-function drawChart(){
-
-
-let ctx=
-document
-.getElementById(
-"chart"
 );
 
 
 
-if(!ctx)
-return;
-
-
-
-let b=0;
-
-let p=0;
-
-
-let bd=[];
-
-let pd=[];
-
-
-
-history.forEach(x=>{
-
-
-if(x==="B")
-
-b++;
-
-
-
-if(x==="P")
-
-p++;
-
-
-
-bd.push(b);
-
-pd.push(p);
-
-
-
-});
-
-
-
-
-
-if(chart){
-
-chart.destroy();
-
 }
 
 
 
 
 
-chart=
-new Chart(
-ctx,
-{
-
-
-type:"line",
-
-
-data:{
-
-
-labels:
-history.map(
-(x,i)=>i+1
-),
-
-
-datasets:[
-
-
-{
-
-
-label:"庄累计",
-
-data:bd,
-
-borderWidth:3
-
-
-},
-
-
-{
-
-
-label:"闲累计",
-
-data:pd,
-
-borderWidth:3
-
-
-}
-
-
-
-]
-
-
-},
-
-
-
-
-options:{
-
-
-responsive:true,
-
-
-plugins:{
-
-
-legend:{
-
-
-labels:{
-
-
-color:"white"
-
-}
-
-}
-
-},
-
-
-
-scales:{
-
-
-x:{
-
-
-ticks:{
-
-color:"white"
-
-}
-
-},
-
-
-y:{
-
-
-ticks:{
-
-color:"white"
-
-}
-
-}
-
-
-}
-
-
-
-}
-
-
-}
-
-);
-
-
-}
-
-
-
-
-
-
-// ===============================
-// 自动加载
-// ===============================
-
-
-load();
-
-
-update();
-
+analyzeRoad();
 
 
 </script>
 
 
 </body>
-
 
 </html>
