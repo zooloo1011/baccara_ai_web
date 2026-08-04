@@ -7,7 +7,7 @@
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Baccarat AI Ultimate</title>
+<title>Baccarat AI Ultimate Pro</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -18,6 +18,7 @@
 box-sizing:border-box;
 }
 
+
 body{
 
 margin:0;
@@ -27,7 +28,8 @@ background:#020617;
 color:white;
 
 font-family:
-Microsoft YaHei,Arial;
+"Microsoft YaHei",
+Arial;
 
 }
 
@@ -35,9 +37,16 @@ Microsoft YaHei,Arial;
 
 header{
 
-padding:22px;
+height:90px;
 
-background:#111827;
+background:
+linear-gradient(90deg,#111827,#020617);
+
+display:flex;
+
+align-items:center;
+
+padding:0 30px;
 
 font-size:30px;
 
@@ -51,7 +60,7 @@ color:#00eaff;
 
 .online{
 
-float:right;
+margin-left:auto;
 
 font-size:15px;
 
@@ -61,44 +70,57 @@ color:#22c55e;
 
 
 
+
 .container{
 
-max-width:1300px;
+padding:25px;
+
+max-width:1400px;
 
 margin:auto;
 
-padding:20px;
-
 }
 
 
 
-.box{
+
+
+.panel{
 
 background:#111827;
 
-border-radius:15px;
+border-radius:18px;
 
-padding:20px;
+padding:25px;
 
-margin-bottom:20px;
+margin-bottom:25px;
 
 box-shadow:
-0 0 20px #000;
+0 0 25px #000;
 
 }
 
 
 
 
-.ai{
+
+.ai-box{
 
 text-align:center;
 
 border:
 1px solid #00eaff;
 
+background:
+linear-gradient(
+135deg,
+#020617,
+#111827
+);
+
 }
+
+
 
 
 
@@ -110,7 +132,10 @@ font-weight:bold;
 
 margin:20px;
 
+color:#00eaff;
+
 }
+
 
 
 
@@ -125,49 +150,74 @@ color:#94a3b8;
 
 
 
+.grid{
 
-input{
+display:grid;
 
-width:80%;
+grid-template-columns:
+repeat(auto-fit,minmax(180px,1fr));
 
-padding:15px;
-
-background:#020617;
-
-border:1px solid #334155;
-
-color:white;
-
-font-size:18px;
-
-border-radius:10px;
+gap:20px;
 
 }
+
+
+
+
+.card{
+
+background:#0f172a;
+
+padding:20px;
+
+border-radius:12px;
+
+}
+
+
+
+.card-title{
+
+color:#94a3b8;
+
+}
+
+
+.number{
+
+font-size:35px;
+
+color:#00eaff;
+
+margin-top:10px;
+
+}
+
 
 
 
 
 button{
 
-padding:14px 20px;
+padding:14px 22px;
+
+margin:5px;
 
 border:0;
 
 border-radius:10px;
 
-margin:5px;
-
-cursor:pointer;
+font-size:16px;
 
 font-weight:bold;
 
-font-size:16px;
+cursor:pointer;
 
 }
 
 
 
-.bank{
+.banker{
 
 background:#dc2626;
 
@@ -197,7 +247,7 @@ color:white;
 
 
 
-.action{
+.main{
 
 background:#00eaff;
 
@@ -207,57 +257,22 @@ color:#020617;
 
 
 
-.clear{
 
-background:#475569;
+input{
+
+width:80%;
+
+padding:15px;
+
+background:#020617;
+
+border:1px solid #334155;
+
+border-radius:10px;
 
 color:white;
 
-}
-
-
-
-
-.grid{
-
-display:grid;
-
-grid-template-columns:
-repeat(auto-fit,minmax(180px,1fr));
-
-gap:15px;
-
-}
-
-
-
-.card{
-
-background:#0f172a;
-
-padding:20px;
-
-border-radius:12px;
-
-}
-
-
-
-.title{
-
-color:#94a3b8;
-
-}
-
-
-
-.num{
-
-font-size:35px;
-
-color:#00eaff;
-
-margin-top:10px;
+font-size:18px;
 
 }
 
@@ -267,17 +282,17 @@ margin-top:10px;
 
 .ball{
 
+width:42px;
+
+height:42px;
+
 display:inline-flex;
 
-width:40px;
-
-height:40px;
-
-border-radius:50%;
+justify-content:center;
 
 align-items:center;
 
-justify-content:center;
+border-radius:50%;
 
 margin:5px;
 
@@ -311,15 +326,17 @@ background:#16a34a;
 
 
 
+
+
 .road{
 
 background:#020617;
 
 padding:15px;
 
-border-radius:10px;
+border-radius:12px;
 
-min-height:70px;
+min-height:80px;
 
 }
 
@@ -335,8 +352,6 @@ background:#334155;
 border-radius:20px;
 
 overflow:hidden;
-
-margin:10px 0;
 
 }
 
@@ -354,13 +369,14 @@ width:0%;
 
 
 
+
 .report{
 
 background:#020617;
 
 padding:20px;
 
-border-radius:10px;
+border-radius:12px;
 
 line-height:1.8;
 
@@ -371,7 +387,9 @@ color:#00eaff;
 
 
 
+
 </style>
+
 
 </head>
 
@@ -382,15 +400,18 @@ color:#00eaff;
 
 <header>
 
-🤖 Baccarat AI Ultimate
+🤖 Baccarat AI Ultimate Pro
 
-<span class="online">
 
-● ONLINE
+<div class="online">
 
-</span>
+● AI ENGINE ONLINE
+
+</div>
+
 
 </header>
+
 
 
 
@@ -399,7 +420,9 @@ color:#00eaff;
 
 
 
-<div class="box ai">
+<!-- AI预测 -->
+
+<div class="panel ai-box">
 
 
 <h2>
@@ -409,6 +432,7 @@ NEXT ROUND AI SIGNAL
 </h2>
 
 
+
 <div id="prediction">
 
 等待数据
@@ -416,13 +440,15 @@ NEXT ROUND AI SIGNAL
 </div>
 
 
+
 <div id="confidence">
 
-输入历史结果开始分析
+输入历史记录开始分析
 
 </div>
 
 
+
 </div>
 
 
@@ -430,39 +456,38 @@ NEXT ROUND AI SIGNAL
 
 
 
-<div class="box">
+
+
+<!-- 输入 -->
+
+<div class="panel">
 
 
 <h2>
 
-输入历史百家乐结果
+历史数据输入
 
 </h2>
 
 
-
-<input id="input"
+<input id="historyInput"
 
 placeholder="例如 BPPBBTBBP">
 
 
-
-<br>
-
+<br><br>
 
 
-<button class="action"
 
+<button class="main"
 onclick="loadInput()">
 
-分析
+分析数据
 
 </button>
 
 
-
-<button class="bank"
-
+<button class="banker"
 onclick="add('B')">
 
 庄 BANKER
@@ -470,9 +495,7 @@ onclick="add('B')">
 </button>
 
 
-
 <button class="player"
-
 onclick="add('P')">
 
 闲 PLAYER
@@ -480,9 +503,7 @@ onclick="add('P')">
 </button>
 
 
-
 <button class="tie"
-
 onclick="add('T')">
 
 和 TIE
@@ -491,16 +512,13 @@ onclick="add('T')">
 
 
 
-<button class="clear"
-
-onclick="clearAll()">
+<button onclick="clearData()">
 
 清空
 
 </button>
 
 
-
 </div>
 
 
@@ -508,21 +526,20 @@ onclick="clearAll()">
 
 
 
-
+<!-- 数据 -->
 
 <div class="grid">
 
 
 <div class="card">
 
-<div class="title">
+<div class="card-title">
 
 总局数
 
 </div>
 
-<div class="num"
-
+<div class="number"
 id="total">
 
 0
@@ -533,16 +550,16 @@ id="total">
 
 
 
+
 <div class="card">
 
-<div class="title">
+<div class="card-title">
 
 庄
 
 </div>
 
-<div class="num"
-
+<div class="number"
 id="banker">
 
 0
@@ -556,14 +573,13 @@ id="banker">
 
 <div class="card">
 
-<div class="title">
+<div class="card-title">
 
 闲
 
 </div>
 
-<div class="num"
-
+<div class="number"
 id="player">
 
 0
@@ -577,14 +593,13 @@ id="player">
 
 <div class="card">
 
-<div class="title">
+<div class="card-title">
 
 和
 
 </div>
 
-<div class="num"
-
+<div class="number"
 id="tie">
 
 0
@@ -594,7 +609,6 @@ id="tie">
 </div>
 
 
-
 </div>
 
 
@@ -602,8 +616,8 @@ id="tie">
 
 
 
+<div class="panel">
 
-<div class="box">
 
 <h2>
 
@@ -612,21 +626,19 @@ id="tie">
 </h2>
 
 
-<div id="road"
-
-class="road">
-
-</div>
-
+<div class="road"
+id="road">
 
 </div>
 
 
+</div>
 
 
 
 
-<div class="box">
+
+<div class="panel">
 
 
 <h2>
@@ -636,46 +648,49 @@ AI趋势评分
 </h2>
 
 
+<p>
+
 庄趋势
+
+</p>
 
 
 <div class="progress">
 
-<div id="bbar"
-
-class="bar">
-
-</div>
+<div class="bar"
+id="bankerBar">
 
 </div>
 
+</div>
 
 
+
+
+<p>
 
 闲趋势
 
+</p>
+
 
 <div class="progress">
 
-<div id="pbar"
-
-class="bar">
-
-</div>
+<div class="bar"
+id="playerBar">
 
 </div>
-
-
 
 </div>
 
 
 
+</div>
 
 
 
 
-<div class="box">
+<div class="panel">
 
 
 <h2>
@@ -685,9 +700,8 @@ AI分析报告
 </h2>
 
 
-<div id="report"
-
-class="report">
+<div class="report"
+id="report">
 
 等待分析
 
@@ -699,14 +713,12 @@ class="report">
 
 
 
-
-
-<div class="box">
+<div class="panel">
 
 
 <h2>
 
-趋势图
+走势曲线
 
 </h2>
 
@@ -720,11 +732,9 @@ class="report">
 
 
 
-
 <script>
-    
-// ===============================
-// Baccarat AI Core
+    // ===============================
+// Baccarat AI Engine
 // ===============================
 
 
@@ -748,13 +758,17 @@ update();
 
 
 
-// 输入字符串
+
+// 批量输入
 
 function loadInput(){
 
+
 let text=
 document
-.getElementById("input")
+.getElementById(
+"historyInput"
+)
 .value
 .toUpperCase();
 
@@ -769,13 +783,14 @@ if(
 x==="B"||
 x==="P"||
 x==="T"
-)
+){
 
 history.push(x);
 
-
 }
 
+
+}
 
 
 save();
@@ -787,14 +802,16 @@ update();
 
 
 
-// 清除
 
-function clearAll(){
+// 清空
+
+
+function clearData(){
 
 history=[];
 
 localStorage.removeItem(
-"baccarat_ai"
+"bac_ai"
 );
 
 update();
@@ -803,13 +820,13 @@ update();
 
 
 
-
 // 保存
+
 
 function save(){
 
 localStorage.setItem(
-"baccarat_ai",
+"bac_ai",
 JSON.stringify(history)
 );
 
@@ -817,21 +834,24 @@ JSON.stringify(history)
 
 
 
-
 // 读取
+
 
 function load(){
 
+
 let d=
 localStorage.getItem(
-"baccarat_ai"
+"bac_ai"
 );
 
 
-if(d)
+if(d){
 
 history=
 JSON.parse(d);
+
+}
 
 
 }
@@ -840,14 +860,12 @@ JSON.parse(d);
 
 
 
-
 // ===============================
-// 更新数据
+// 数据统计
 // ===============================
 
 
 function update(){
-
 
 
 let B=
@@ -862,7 +880,6 @@ x=>x==="P"
 ).length;
 
 
-
 let T=
 history.filter(
 x=>x==="T"
@@ -874,25 +891,25 @@ total.innerHTML=
 history.length;
 
 
-banker.innerHTML=
-B;
+banker.innerHTML=B;
 
 
-player.innerHTML=
-P;
+player.innerHTML=P;
 
 
-tie.innerHTML=
-T;
+tie.innerHTML=T;
 
 
 
 drawRoad();
 
-analyze();
+
+AI();
+
 
 
 drawChart();
+
 
 
 }
@@ -902,9 +919,8 @@ drawChart();
 
 
 
-
 // ===============================
-// 路单
+// 路单显示
 // ===============================
 
 
@@ -951,20 +967,22 @@ box.appendChild(e);
 
 
 
-
-
 // ===============================
-// AI分析
+// AI分析模型
 // ===============================
 
 
-function analyze(){
+function AI(){
 
 
 if(history.length<5)
 
 return;
 
+
+
+let total=
+history.length;
 
 
 
@@ -980,6 +998,7 @@ x=>x==="P"
 ).length;
 
 
+
 let T=
 history.filter(
 x=>x==="T"
@@ -987,29 +1006,39 @@ x=>x==="T"
 
 
 
-let scoreB=50;
-
-
-let scoreP=50;
 
 
 
+let bankerScore=50;
 
+
+let playerScore=50;
+
+
+
+
+
+// ----------------
 // 历史比例
+// ----------------
+
 
 if(B>P)
 
-scoreB+=10;
+bankerScore+=10;
 
 else
 
-scoreP+=10;
+playerScore+=10;
 
 
 
 
 
+
+// ----------------
 // 最近趋势
+// ----------------
 
 
 let recent=
@@ -1019,24 +1048,25 @@ history.slice(-20);
 
 let rb=
 recent.filter(
-x=>x==="B"
+x=>"B"===x
 ).length;
+
 
 
 let rp=
 recent.filter(
-x=>x==="P"
+x=>"P"===x
 ).length;
 
 
 
 if(rb>rp)
 
-scoreB+=15;
+bankerScore+=15;
 
 else
 
-scoreP+=15;
+playerScore+=15;
 
 
 
@@ -1044,7 +1074,10 @@ scoreP+=15;
 
 
 
-// 连续检测
+
+// ----------------
+// 连续走势
+// ----------------
 
 
 let last=
@@ -1053,8 +1086,8 @@ history.length-1
 ];
 
 
-let streak=1;
 
+let streak=1;
 
 
 for(
@@ -1067,7 +1100,6 @@ i--
 if(history[i]===last)
 
 streak++;
-
 
 else
 
@@ -1082,23 +1114,24 @@ break;
 
 if(last==="B")
 
-scoreB+=streak*3;
+bankerScore+=
+streak*3;
+
 
 
 if(last==="P")
 
-scoreP+=streak*3;
+playerScore+=
+streak*3;
 
 
 
 
 
 
-
-// 反转风险
-
-
-let risk="LOW";
+// ----------------
+// 反转压力
+// ----------------
 
 
 let reverse=0;
@@ -1108,9 +1141,6 @@ let reverse=0;
 if(streak>=5){
 
 
-risk="HIGH";
-
-
 reverse=
 streak*3;
 
@@ -1118,12 +1148,12 @@ streak*3;
 
 if(last==="B")
 
-scoreP+=reverse;
+playerScore+=reverse;
 
 
 else
 
-scoreB+=reverse;
+bankerScore+=reverse;
 
 
 
@@ -1133,11 +1163,13 @@ scoreB+=reverse;
 
 
 
+// ----------------
+// 单跳检测
+// ----------------
 
-// 单跳
 
+let single=true;
 
-let jump=true;
 
 
 for(
@@ -1148,22 +1180,43 @@ i++
 
 
 if(
-history[i]==history[i-1]
+history[i]===
+history[i-1]
 )
 
-jump=false;
+single=false;
+
 
 
 }
 
 
 
-if(jump){
+if(single){
+
+bankerScore-=5;
+
+playerScore-=5;
+
+}
 
 
-scoreB-=5;
 
-scoreP-=5;
+
+
+// ----------------
+// 平衡修正
+// ----------------
+
+
+if(
+Math.abs(B-P)<5
+){
+
+
+bankerScore+=5;
+
+playerScore+=5;
 
 
 }
@@ -1171,32 +1224,37 @@ scoreP-=5;
 
 
 
+
+// 最终评分
 
 
 let sum=
-scoreB+scoreP;
+bankerScore+
+playerScore;
 
 
 
 let bp=
-(scoreB/sum*100)
+(bankerScore/sum*100)
 .toFixed(1);
 
 
 
 let pp=
-(scoreP/sum*100)
+(playerScore/sum*100)
 .toFixed(1);
 
 
 
-bbar.style.width=
+
+
+bankerBar.style.width=
 bp+"%";
 
 
-pbar.style.width=
-pp+"%";
 
+playerBar.style.width=
+pp+"%";
 
 
 
@@ -1207,7 +1265,7 @@ let result;
 
 
 
-if(scoreB>scoreP){
+if(bankerScore>playerScore){
 
 
 result=
@@ -1246,22 +1304,18 @@ confidence.innerHTML=
 
 `
 
-AI评分:
-
+AI置信度:
 ${Math.max(bp,pp)}%
 
+
 <br>
+
+当前:
+${last}
 
 连续:
-
 ${streak}局
 
-
-<br>
-
-风险:
-
-${risk}
 
 `;
 
@@ -1276,7 +1330,7 @@ report.innerHTML=
 `
 
 <b>
-AI ANALYSIS REPORT
+AI DATA REPORT
 </b>
 
 
@@ -1284,29 +1338,27 @@ AI ANALYSIS REPORT
 
 
 样本:
-
-${history.length}局
+${total}局
 
 
 <br>
 
 
 庄:
-
 ${B}
 
 
 &nbsp;
 
-闲:
 
+闲:
 ${P}
 
 
 &nbsp;
 
-和:
 
+和:
 ${T}
 
 
@@ -1314,7 +1366,7 @@ ${T}
 <br><br>
 
 
-最近走势:
+最近20局:
 
 ${recent.join(" ")}
 
@@ -1323,9 +1375,13 @@ ${recent.join(" ")}
 <br><br>
 
 
-当前走势:
+走势:
 
-${streak}连
+${
+streak>=4?
+"长龙状态":
+"正常"
+}
 
 
 
@@ -1334,7 +1390,11 @@ ${streak}连
 
 单跳:
 
-${jump?"是":"否"}
+${
+single?
+"发现单跳":
+"无"
+}
 
 
 
@@ -1350,10 +1410,13 @@ ${reverse}
 <br><br>
 
 
-建议:
+预测:
+
+<b>
 
 ${result}
 
+</b>
 
 
 `;
@@ -1361,21 +1424,13 @@ ${result}
 
 
 }
-
-
-
-
-
-
-
-
+    
 // ===============================
 // 趋势图
 // ===============================
 
 
 function drawChart(){
-
 
 
 let ctx=
@@ -1387,7 +1442,6 @@ document
 
 
 if(!ctx)
-
 return;
 
 
@@ -1411,6 +1465,7 @@ if(x==="B")
 b++;
 
 
+
 if(x==="P")
 
 p++;
@@ -1428,9 +1483,13 @@ pd.push(p);
 
 
 
-if(chart)
+
+if(chart){
 
 chart.destroy();
+
+}
+
 
 
 
@@ -1458,16 +1517,19 @@ datasets:[
 
 {
 
+
 label:"庄累计",
 
 data:bd,
 
 borderWidth:3
 
+
 },
 
 
 {
+
 
 label:"闲累计",
 
@@ -1475,7 +1537,9 @@ data:pd,
 
 borderWidth:3
 
+
 }
+
 
 
 ]
@@ -1484,10 +1548,63 @@ borderWidth:3
 },
 
 
+
+
 options:{
 
 
-responsive:true
+responsive:true,
+
+
+plugins:{
+
+
+legend:{
+
+
+labels:{
+
+
+color:"white"
+
+}
+
+}
+
+},
+
+
+
+scales:{
+
+
+x:{
+
+
+ticks:{
+
+color:"white"
+
+}
+
+},
+
+
+y:{
+
+
+ticks:{
+
+color:"white"
+
+}
+
+}
+
+
+}
+
+
 
 }
 
@@ -1497,7 +1614,6 @@ responsive:true
 );
 
 
-
 }
 
 
@@ -1505,7 +1621,9 @@ responsive:true
 
 
 
-// 初始化
+// ===============================
+// 自动加载
+// ===============================
 
 
 load();
